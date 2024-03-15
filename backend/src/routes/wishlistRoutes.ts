@@ -25,10 +25,21 @@ router.post('/:userId', async (req, res) => {
     let wishlist = await Wishlist.findOne({ user: req.params.userId });
     if (!wishlist) {
       wishlist = new Wishlist({ user: req.params.userId });
+      await wishlist.save();
     }
-    wishlist.listings.addToSet(listingId);
-    await wishlist.save();
-    res.json(wishlist);
+    
+    // Use MongoDB's $addToSet to ensure no duplicates
+    await Wishlist.updateOne(
+      { _id: wishlist._id },
+      { $addToSet: { listings: listingId } }
+    );
+    
+    // Reload wishlist to reflect the update
+    wishlist = await Wishlist.findOne({ user: req.params.userId })
+      .populate('listings')
+      .populate('user', 'name email');
+    
+    res.json(wishlist);    
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
