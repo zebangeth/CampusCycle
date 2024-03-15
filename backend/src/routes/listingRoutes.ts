@@ -6,7 +6,13 @@ const router = express.Router();
 // Get all listings
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, category, searchTerm } = req.query;
+    // Default values are strings, parse them as numbers
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const category = req.query.category as string;
+    const searchTerm = req.query.searchTerm as string;
+
     const query: { category?: string, title?: { $regex: string, $options: string } } = {};
 
     if (category) {
@@ -27,6 +33,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Get a specific listing
 router.get('/:listingId', async (req, res) => {
