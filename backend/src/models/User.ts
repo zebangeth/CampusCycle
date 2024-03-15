@@ -1,17 +1,47 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
-interface IUser extends Document {
-  username: string;
+export interface IUser extends Document {
+  name: string;
   email: string;
   password: string;
+  photo: string;
+  tagline: string;
   joinedDate: Date;
+  itemsSold: number;
+  activeListings: number;
+  contactInfo: {
+    email: string;
+    phoneNumber: string;
+    whatsapp: string;
+    wechat: string;
+    telegram: string;
+    snapchat: string;
+    messenger: string;
+  };
+  preferredContact: string;
 }
 
-const UserSchema: Schema = new Schema({
-  username: { type: String, required: true, unique: true },
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  joinedDate: { type: Date, default: Date.now } // Automatically set to the current date
+  photo: { type: String },
+  tagline: { type: String },
+  joinedDate: { type: Date, default: Date.now },
+  itemsSold: { type: Number, default: 0 },
+  activeListings: { type: Number, default: 0 },
+  contactInfo: {
+    email: { type: String },
+    phoneNumber: { type: String },
+    whatsapp: { type: String },
+    wechat: { type: String },
+    telegram: { type: String },
+    snapchat: { type: String },
+    messenger: { type: String },
+  },
+  preferredContact: { type: String },
 });
 
-export default mongoose.model<IUser>('User', UserSchema);
+const User = mongoose.model<IUser>('User', userSchema);
+
+export default User;
