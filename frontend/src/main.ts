@@ -7,11 +7,21 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import App from './App.vue'
 import UserLogin from './views/UserLogin.vue'
+import Home from './views/Home.vue'
+import UserRegister from './views/UserRegister.vue'
 
 const routes = [
   {
-    path: "/",
+    path: "/login",
     component: UserLogin,
+  },
+  {
+    path: "/",
+    component: Home,
+  },
+  {
+    path: "/register",
+    component: UserRegister,
   }
 ]
 

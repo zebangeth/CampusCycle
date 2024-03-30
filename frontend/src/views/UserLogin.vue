@@ -5,18 +5,21 @@
       <p class="lead">Buy and sell dorm</p>
     </div>
 
+    <b-alert variant="danger" v-if="errorMessage" class="mt-3">{{ errorMessage }}</b-alert>
+
     <b-card class="user-login-container shadow">
       <b-container>
         <b-row>
           <b-col cols="12">
             <h2>Log in</h2>
             <b-form @submit.prevent="onSubmit">
-              <b-form-group label="Enter your username / email:" label-for="input-username">
+              <b-form-group label="Enter your email:" label-for="input-email">
                 <b-form-input
-                  id="input-username"
-                  v-model="loginData.username"
+                  id="input-email"
+                  type="email"
+                  v-model="loginData.email"
                   required
-                  placeholder="username / email"
+                  placeholder="email"
                 ></b-form-input>
               </b-form-group>
 
@@ -48,19 +51,49 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { LoginData } from '../data';
 
 const loginData = ref<LoginData>({
-  username: '',
+  email: '',
   password: '',
 });
 
-const onSubmit = () => {
-  // Perform login action
+const errorMessage = ref('');
+
+const router = useRouter();
+
+const onSubmit = async () => {
+  errorMessage.value = '';
+
+  try {
+    const response = await fetch('/api/users/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: loginData.value.email,
+        password: loginData.value.password,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Login Failed!');
+    }
+
+    const data = await response.json();
+    localStorage.setItem('token', data.token);
+    router.push('/');
+  } catch (error) {
+    errorMessage.value = error.message;
+
+  }
 };
 
 const register = () => {
-  // Redirect to register page
+  router.push('/register');
 };
 
 </script>
