@@ -5,8 +5,6 @@
       <p class="lead">Buy and sell dorm</p>
     </div>
 
-    <b-alert variant="danger" v-if="errorMessage" class="mt-3">{{ errorMessage }}</b-alert>
-
     <b-card class="user-login-container shadow">
       <b-container>
         <b-row>
@@ -59,13 +57,9 @@ const loginData = ref<LoginData>({
   password: '',
 });
 
-const errorMessage = ref('');
-
 const router = useRouter();
 
 const onSubmit = async () => {
-  errorMessage.value = '';
-
   try {
     const response = await fetch('/api/users/login', {
       method: 'POST',
@@ -87,8 +81,7 @@ const onSubmit = async () => {
     localStorage.setItem('token', data.token);
     router.push('/');
   } catch (error) {
-    errorMessage.value = error.message;
-
+    alert(error.message);
   }
 };
 

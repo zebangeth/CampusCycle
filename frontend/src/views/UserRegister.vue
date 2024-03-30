@@ -5,8 +5,6 @@
             <p class="lead">Buy and sell dorm</p>
         </div>
 
-        <b-alert variant="danger" v-if="errorMessage" class="mt-3">{{ errorMessage }}</b-alert>
-
       <b-card class="user-register-container shadow" title="Register">
         <b-form @submit.prevent="onSubmit">
           <b-form-group label="Name:" label-for="input-name">
@@ -60,7 +58,6 @@ const registerData = ref<RegisterData>({
   password: '',
 });
 
-const errorMessage = ref('');
 const router = useRouter();
 
 const onSubmit = async () => {
@@ -80,7 +77,7 @@ const onSubmit = async () => {
 
     router.push('/login');
   } catch (error) {
-    errorMessage.value = error.message; 
+    alert(error.message);
   }
 };
 </script>
