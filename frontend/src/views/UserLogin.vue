@@ -81,7 +81,11 @@ const onSubmit = async () => {
     localStorage.setItem('token', data.token);
     router.push('/');
   } catch (error) {
-    alert(error.message);
+    if (error instanceof Error) {
+      alert(error.message);
+    } else {
+      alert("An unknown error occurred while logging in!");
+    }
   }
 };
 

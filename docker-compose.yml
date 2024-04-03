@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  backend:
+    image: campuscycle-backend:latest # 使用您构建的后端镜像名称
+    ports:
+      - "3000:3000" # 映射端口（如果您的后端服务在容器内监听3000端口）
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/CampusCycle # 示例 MongoDB URI, 根据需要进行调整
+    depends_on:
+      - mongo
+
+  frontend:
+    image: campuscycle-frontend:latest # 使用您构建的前端镜像名称
+    ports:
+      - "80:80" # 假设您的前端在容器内监听80端口
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

@@ -8,14 +8,16 @@ import wishlistRoutes from './routes/wishlistRoutes';
 import searchRoutes from './routes/searchRoutes';
 import contactRoutes from './routes/contactRoutes';
 
-
+console.log("Starting server...");
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
+console.log("Setting up middleware...");
 app.use(express.json());
 
 // Connect to database
+console.log("Connecting to database...");
 connectDB();
 
 // Routes
