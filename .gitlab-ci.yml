@@ -1,0 +1,51 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  REGISTRY_PATH: zebangeth/campuscycle
+  REGISTRY_USERNAME: $CI_REGISTRY_USERNAME
+  REGISTRY_PASSWORD: $CI_REGISTRY_PASSWORD
+
+build-frontend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
+  script:
+    - cd frontend
+    - docker build -t $REGISTRY_PATH:frontend-latest .
+    - docker push $REGISTRY_PATH:frontend-latest
+
+build-backend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
+  script:
+    - cd backend
+    - docker build -t $REGISTRY_PATH:backend-latest .
+    - docker push $REGISTRY_PATH:backend-latest
+
+unit-test: # to be implemented
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - echo "Unit tests complete."
+
+e2e-test: # to be implemented
+  stage: test
+  script:
+    - echo "Running e2e tests..."
+    - echo "e2e tests complete."
+
+deploy:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  script:
+    - kubectl create -f k8s/
