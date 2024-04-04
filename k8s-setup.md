@@ -10,7 +10,7 @@ docker push zebangeth/campuscycle:backend-latest
 cd ..
 ```
 
-## UI (NGINX)
+### UI (NGINX)
 ```bash
 cd frontend
 docker build -t zebangeth/campuscycle:frontend-latest .
