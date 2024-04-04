@@ -48,4 +48,5 @@ deploy:
   stage: deploy
   image: bitnami/kubectl:latest
   script:
+    - kubectl delete -f k8s/
     - kubectl create -f k8s/
