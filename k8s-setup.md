@@ -5,14 +5,16 @@
 ### Backend
 ```bash
 cd backend
-docker build -t campuscycle-backend .
+docker build -t zebangeth/campuscycle:backend-latest .
+docker push zebangeth/campuscycle:backend-latest
 cd ..
 ```
 
 ## UI (NGINX)
 ```bash
 cd frontend
-docker build -t campuscycle-frontend .
+docker build -t zebangeth/campuscycle:frontend-latest .
+docker push zebangeth/campuscycle:frontend-latest
 cd ..
 ```
 
@@ -63,10 +65,10 @@ The necessary database setup is handled by the application code, so no MongoDB s
 
    Ensure that the frontend and backend services are created and have the correct port mappings. 
 
-3. Check the logs of your frontend/backend pod:
+3. Check the logs of your pod:
 
    ```bash
-   kubectl logs <frontend-pod-name>
+   kubectl logs <pod-name>
    ```
 
-   Replace `<frontend-pod-name>` with the actual name.
+   Replace `<pod-name>` with the actual name.
