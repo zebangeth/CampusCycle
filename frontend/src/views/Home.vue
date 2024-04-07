@@ -67,8 +67,20 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
-const categories = ref([]);
-const featuredItems = ref([]);
+interface Category {
+  _id: string;
+  name: string;
+}
+
+interface Item {
+  _id: string;
+  title: string;
+  price: number;
+  images: string[];
+}
+
+const categories = ref<Category[]>([]);
+const featuredItems = ref<Item[]>([]);
 const searchTerm = ref('');
 
 const fetchCategories = async () => {
@@ -92,7 +104,7 @@ const fetchFeaturedItems = async () => {
   }
 };
 
-const filterByCategory = async (categoryName) => {
+const filterByCategory = async (categoryName: string) => {
   try {
     const response = await fetch(`/api/listings?category=${categoryName}`);
     if (!response.ok) throw new Error('Failed to filter by category');
