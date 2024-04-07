@@ -2,7 +2,6 @@ import express from 'express';
 import User from '../models/User';
 import Listing from '../models/Listing';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -36,13 +35,24 @@ router.post('/login', async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET as string);
-    res.json({ token });
+    req.session.userId = user._id;
+    res.json({ message: 'Logged in successfully' });
   } catch (error) {
     console.error('Error logging in:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// User logout
+router.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error logging out:', err);
+    }
+    res.json({ message: 'Logged out successfully' });
+  });
+});
+
 
 // Get user profile
 router.get('/:userId', async (req, res) => {
