@@ -85,18 +85,4 @@ router.put('/:userId', async (req, res) => {
   }
 });
 
-// Get user's active listings
-router.get('/:userId/listings', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    const listings = await Listing.find({ seller: user._id });
-    res.json(listings);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
 export default router;
