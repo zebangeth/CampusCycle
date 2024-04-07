@@ -11,6 +11,7 @@ export interface IListing extends Document {
   description: string;
   images: string[];
   category: string;
+  featured: boolean;
   price: number;
   condition: Condition;
   location: string;
@@ -24,6 +25,7 @@ const listingSchema = new mongoose.Schema({
   description: { type: String, required: true },
   images: [{ type: String }],
   category: { type: String, required: true },
+  featured: { type: Boolean, default: false},
   price: { type: Number, required: true },
   condition: { type: String, enum: Object.values(Condition), required: true },
   location: { type: String, required: true },

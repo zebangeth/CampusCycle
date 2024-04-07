@@ -35,7 +35,7 @@
             </b-form>
 
             <div class="mt-3">
-              <b-link href="#">Forgot your password?</b-link>
+              <b-link @click.prevent="forgotPassword">Forgot your password?</b-link>
             </div>
             <hr>
             <b-button variant="outline-secondary" @click="register" class="w-100 mb-2">Register</b-button>
@@ -90,6 +90,10 @@ const onSubmit = async () => {
 
 const register = () => {
   router.push('/register');
+};
+
+const forgotPassword = () => {
+  window.alert('Please send your login information to support@campuscycle.com to retrieve your password.');
 };
 
 </script>

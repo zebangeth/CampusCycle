@@ -95,7 +95,9 @@ router.delete('/:listingId', async (req, res) => {
 // Get featured listings
 router.get('/featured', async (req, res) => {
   try {
+    console.log("get featured listings:");
     const featuredListings = await Listing.find({ featured: true }).limit(10);
+    console.log(featuredListings);
     res.json(featuredListings);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
