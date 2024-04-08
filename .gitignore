@@ -1,4 +1,5 @@
 .env
+.gitignore
 .DS_Store
 
 # Node.js
