@@ -1,12 +1,13 @@
 import express from 'express';
 import Listing from '../models/Listing';
+import { isAuthenticated } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
 // Get featured listings
 router.get('/featured', async (req, res) => {
   try {
-    const featuredListings = await Listing.find({ featured: true }).limit(10);
+    const featuredListings = await Listing.find({ featured: true }).limit(12);
     res.json(featuredListings);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -61,9 +62,12 @@ router.get('/', async (req, res) => {
 });
 
 // Create a new listing
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
   try {
-    const listing = new Listing(req.body);
+    const listing = new Listing({
+      ...req.body,
+      seller: req.session.userId,
+    });
     await listing.save();
     res.status(201).json(listing);
   } catch (error) {
@@ -72,16 +76,17 @@ router.post('/', async (req, res) => {
 });
 
 // Update a listing
-router.put('/:listingId', async (req, res) => {
+router.put('/:listingId', isAuthenticated, async (req, res) => {
   try {
-    const listing = await Listing.findByIdAndUpdate(
-      req.params.listingId,
-      req.body,
-      { new: true }
-    );
+    const listing = await Listing.findOne({
+      _id: req.params.listingId,
+      seller: req.session.userId,
+    });
     if (!listing) {
       return res.status(404).json({ error: 'Listing not found' });
     }
+    Object.assign(listing, req.body);
+    await listing.save();
     res.json(listing);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -89,9 +94,12 @@ router.put('/:listingId', async (req, res) => {
 });
 
 // Delete a listing
-router.delete('/:listingId', async (req, res) => {
+router.delete('/:listingId', isAuthenticated, async (req, res) => {
   try {
-    const listing = await Listing.findByIdAndDelete(req.params.listingId);
+    const listing = await Listing.findOneAndDelete({
+      _id: req.params.listingId,
+      seller: req.session.userId,
+    });
     if (!listing) {
       return res.status(404).json({ error: 'Listing not found' });
     }
