@@ -1,7 +1,7 @@
 import express from 'express';
 import User from '../models/User';
-import Listing from '../models/Listing';
 import bcrypt from 'bcrypt';
+import { isAuthenticated } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
@@ -44,7 +44,7 @@ router.post('/login', async (req, res) => {
 });
 
 // User logout
-router.post('/logout', (req, res) => {
+router.post('/logout', isAuthenticated, (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       console.error('Error logging out:', err);
@@ -69,9 +69,13 @@ router.get('/:userId', async (req, res) => {
 });
 
 // Update user profile
-router.put('/:userId', async (req, res) => {
+router.put('/:userId', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.userId, req.body, {
+    const userId = req.params.userId;
+    if (userId !== req.session.userId) {
+      return res.status(403).json({ error: 'You can only update your own profile' });
+    }
+    const user = await User.findByIdAndUpdate(userId, req.body, {
       new: true,
       runValidators: true,
     });

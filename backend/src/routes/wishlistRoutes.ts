@@ -1,12 +1,13 @@
 import express from 'express';
 import Wishlist from '../models/Wishlist';
+import { isAuthenticated } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
 // Get user's wishlist
-router.get('/:userId', async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
   try {
-    const wishlist = await Wishlist.findOne({ user: req.params.userId })
+    const wishlist = await Wishlist.findOne({ user: req.session.userId })
       .populate('listings')
       .populate('user', 'name email');
     if (!wishlist) {
@@ -19,12 +20,12 @@ router.get('/:userId', async (req, res) => {
 });
 
 // Add a listing to user's wishlist
-router.post('/:userId', async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
   try {
     const { listingId } = req.body;
-    let wishlist = await Wishlist.findOne({ user: req.params.userId });
+    let wishlist = await Wishlist.findOne({ user: req.session.userId });
     if (!wishlist) {
-      wishlist = new Wishlist({ user: req.params.userId });
+      wishlist = new Wishlist({ user: req.session.userId });
       await wishlist.save();
     }
     
@@ -35,7 +36,7 @@ router.post('/:userId', async (req, res) => {
     );
     
     // Reload wishlist to reflect the update
-    wishlist = await Wishlist.findOne({ user: req.params.userId })
+    wishlist = await Wishlist.findOne({ user: req.session.userId })
       .populate('listings')
       .populate('user', 'name email');
     
@@ -46,10 +47,10 @@ router.post('/:userId', async (req, res) => {
 });
 
 // Remove a listing from user's wishlist
-router.delete('/:userId/:listingId', async (req, res) => {
+router.delete('/:listingId', isAuthenticated, async (req, res) => {
   try {
     const wishlist = await Wishlist.findOneAndUpdate(
-      { user: req.params.userId },
+      { user: req.session.userId },
       { $pull: { listings: req.params.listingId } },
       { new: true }
     );
