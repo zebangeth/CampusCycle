@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
+import session from 'express-session';  
+import MongoStore from 'connect-mongo';
 import connectDB from './database';
 import userRoutes from './routes/userRoutes';
 import categoryRoutes from './routes/categoryRoutes';
@@ -15,6 +17,21 @@ const port = process.env.PORT || 3000;
 // Middleware
 console.log("Setting up middleware...");
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET as string,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // currently false in development
+      maxAge: 72 * 60 * 60 * 1000, // 72 hours
+    },
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      ttl: 14 * 24 * 60 * 60 // 14 days
+    })
+  })
+);
 
 // Set up CORS
 console.log("Setting up CORS...");

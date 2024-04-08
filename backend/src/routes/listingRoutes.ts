@@ -3,6 +3,32 @@ import Listing from '../models/Listing';
 
 const router = express.Router();
 
+// Get featured listings
+router.get('/featured', async (req, res) => {
+  try {
+    const featuredListings = await Listing.find({ featured: true }).limit(10);
+    res.json(featuredListings);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get a specific listing
+router.get('/:listingId', async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.listingId).populate(
+      'seller',
+      'name email'
+    );
+    if (!listing) {
+      return res.status(404).json({ error: 'Listing not found' });
+    }
+    res.json(listing);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get all listings
 router.get('/', async (req, res) => {
   try {
@@ -29,23 +55,6 @@ router.get('/', async (req, res) => {
       .populate('seller', 'name email');
 
     res.json(listings);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-
-// Get a specific listing
-router.get('/:listingId', async (req, res) => {
-  try {
-    const listing = await Listing.findById(req.params.listingId).populate(
-      'seller',
-      'name email'
-    );
-    if (!listing) {
-      return res.status(404).json({ error: 'Listing not found' });
-    }
-    res.json(listing);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -92,16 +101,5 @@ router.delete('/:listingId', async (req, res) => {
   }
 });
 
-// Get featured listings
-router.get('/featured', async (req, res) => {
-  try {
-    console.log("get featured listings:");
-    const featuredListings = await Listing.find({ featured: true }).limit(10);
-    console.log(featuredListings);
-    res.json(featuredListings);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 export default router;
