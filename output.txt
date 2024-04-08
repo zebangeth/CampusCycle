@@ -1,0 +1,724 @@
+backend Directory Structure:
+backend/
+├── package.json
+├── .env
+├── src/
+│   ├── database.ts
+│   ├── custom.d.ts
+│   ├── server.ts
+│   ├── middleware/
+│   │   ├── authMiddleware.ts
+│   ├── models/
+│   │   ├── Category.ts
+│   │   ├── Wishlist.ts
+│   │   ├── Listing.ts
+│   │   ├── User.ts
+│   ├── routes/
+│   │   ├── searchRoutes.ts
+│   │   ├── wishlistRoutes.ts
+│   │   ├── categoryRoutes.ts
+│   │   ├── listingRoutes.ts
+│   │   ├── userRoutes.ts
+│   │   ├── contactRoutes.ts
+
+package.json:
+```
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/server.ts",
+    "build": "tsc",
+    "serve": "node dist/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express-session": "^1.18.0",
+    "bcrypt": "^5.1.1",
+    "connect-mongo": "^5.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "express-session": "^1.18.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.2.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.11.28"
+  }
+}
+
+```
+
+.env:
+```
+MONGODB_URI=mongodb://localhost:27017/CampusCycle
+PORT=3000
+SESSION_SECRET=<my-session-secret> # TBD
+NODE_ENV=development
+```
+
+src/database.ts:
+```
+import mongoose from 'mongoose';
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI!);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`Error: ${error}`);
+    process.exit(1); // Exit process with failure
+  }
+};
+
+export default connectDB;
+
+```
+
+src/custom.d.ts:
+```
+import 'express-session';
+
+declare module 'express-session' {
+  interface SessionData {
+    userId: string | null;
+  }
+}
+
+```
+
+src/server.ts:
+```
+import 'dotenv/config';
+import express from 'express';
+import session from 'express-session';  
+import MongoStore from 'connect-mongo';
+import connectDB from './database';
+import userRoutes from './routes/userRoutes';
+import categoryRoutes from './routes/categoryRoutes';
+import listingRoutes from './routes/listingRoutes';
+import wishlistRoutes from './routes/wishlistRoutes';
+import searchRoutes from './routes/searchRoutes';
+import contactRoutes from './routes/contactRoutes';
+
+console.log("Starting server...");
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Middleware
+console.log("Setting up middleware...");
+app.use(express.json());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET as string,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // currently false in development
+      maxAge: 72 * 60 * 60 * 1000, // 72 hours
+    },
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      ttl: 14 * 24 * 60 * 60 // 14 days
+    })
+  })
+);
+
+// Set up CORS
+console.log("Setting up CORS...");
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+// Connect to database
+console.log("Connecting to database...");
+connectDB();
+
+// Routes
+app.use('/api/users', userRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/listings', listingRoutes);
+app.use('/api/wishlists', wishlistRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/contact', contactRoutes);
+
+
+app.get('/', (req, res) => {
+  res.send('Hello World from CampusCycle backend!');
+});
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
+```
+
+src/middleware/authMiddleware.ts:
+```
+import { Request, Response, NextFunction } from 'express';
+
+export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+  if (req.session && req.session.userId) {
+    return next();
+  }
+  return res.status(401).json({ error: 'You must be logged in to access this resource' });
+};
+
+```
+
+src/models/Category.ts:
+```
+import mongoose, { Document } from 'mongoose';
+
+export interface ICategory extends Document {
+  name: string;
+  icon: string;
+}
+
+const categorySchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true },
+  icon: { type: String },
+});
+
+const Category = mongoose.model<ICategory>('Category', categorySchema);
+
+export default Category;
+
+```
+
+src/models/Wishlist.ts:
+```
+import mongoose, { Document } from 'mongoose';
+
+export interface IWishlist extends Document {
+  user: mongoose.Types.ObjectId;
+  listings: mongoose.Types.ObjectId[];
+}
+
+const wishlistSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  listings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Listing' }],
+});
+
+const Wishlist = mongoose.model<IWishlist>('Wishlist', wishlistSchema);
+
+export default Wishlist;
+
+```
+
+src/models/Listing.ts:
+```
+import mongoose, { Document } from 'mongoose';
+
+export enum Condition {
+  NEW = 'New',
+  LIKE_NEW = 'Like New',
+  USED = 'Used'
+}
+
+export interface IListing extends Document {
+  title: string;
+  description: string;
+  images: string[];
+  category: string;
+  price: number;
+  condition: Condition;
+  location: string;
+  seller: mongoose.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const listingSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  images: [{ type: String }],
+  category: { type: String, required: true },
+  price: { type: Number, required: true },
+  condition: { type: String, enum: Object.values(Condition), required: true },
+  location: { type: String, required: true },
+  seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
+
+const Listing = mongoose.model<IListing>('Listing', listingSchema);
+
+export default Listing;
+
+```
+
+src/models/User.ts:
+```
+import mongoose, { Document } from 'mongoose';
+
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+  photo: string;
+  tagline: string;
+  joinedDate: Date;
+  itemsSold: number;
+  activeListings: number;
+  contactInfo: {
+    email: string;
+    phoneNumber: string;
+    whatsapp: string;
+    wechat: string;
+    telegram: string;
+    snapchat: string;
+    messenger: string;
+  };
+  preferredContact: string;
+}
+
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  photo: { type: String },
+  tagline: { type: String },
+  joinedDate: { type: Date, default: Date.now },
+  itemsSold: { type: Number, default: 0 },
+  activeListings: { type: Number, default: 0 },
+  contactInfo: {
+    email: { type: String },
+    phoneNumber: { type: String },
+    whatsapp: { type: String },
+    wechat: { type: String },
+    telegram: { type: String },
+    snapchat: { type: String },
+    messenger: { type: String },
+  },
+  preferredContact: { type: String },
+});
+
+const User = mongoose.model<IUser>('User', userSchema);
+
+export default User;
+
+```
+
+src/routes/searchRoutes.ts:
+```
+import express from 'express';
+import Listing from '../models/Listing';
+
+const router = express.Router();
+
+interface Query {
+  title?: { $regex: string, $options: string };
+  category?: string;
+  price?: { $gte?: string, $lte?: string };
+  condition?: string;
+}
+
+// Search listings
+router.get('/', async (req, res) => {
+  try {
+    const { q, category, minPrice, maxPrice, condition } = req.query;
+    const query: Query = {}; // Use the Query interface
+
+    if (q) {
+      query.title = { $regex: q as string, $options: 'i' };
+    }
+
+    if (category) {
+      query.category = category as string;
+    }
+
+    if (minPrice && maxPrice) {
+      query.price = { $gte: minPrice as string, $lte: maxPrice as string };
+    } else if (minPrice) {
+      query.price = { $gte: minPrice as string };
+    } else if (maxPrice) {
+      query.price = { $lte: maxPrice as string };
+    }
+
+    if (condition) {
+      query.condition = condition as string;
+    }
+
+    const listings = await Listing.find(query).populate('seller', 'name email');
+    res.json(listings);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+export default router;
+
+```
+
+src/routes/wishlistRoutes.ts:
+```
+import express from 'express';
+import Wishlist from '../models/Wishlist';
+
+const router = express.Router();
+
+// Get user's wishlist
+router.get('/:userId', async (req, res) => {
+  try {
+    const wishlist = await Wishlist.findOne({ user: req.params.userId })
+      .populate('listings')
+      .populate('user', 'name email');
+    if (!wishlist) {
+      return res.status(404).json({ error: 'Wishlist not found' });
+    }
+    res.json(wishlist);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Add a listing to user's wishlist
+router.post('/:userId', async (req, res) => {
+  try {
+    const { listingId } = req.body;
+    let wishlist = await Wishlist.findOne({ user: req.params.userId });
+    if (!wishlist) {
+      wishlist = new Wishlist({ user: req.params.userId });
+      await wishlist.save();
+    }
+    
+    // Use MongoDB's $addToSet to ensure no duplicates
+    await Wishlist.updateOne(
+      { _id: wishlist._id },
+      { $addToSet: { listings: listingId } }
+    );
+    
+    // Reload wishlist to reflect the update
+    wishlist = await Wishlist.findOne({ user: req.params.userId })
+      .populate('listings')
+      .populate('user', 'name email');
+    
+    res.json(wishlist);    
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Remove a listing from user's wishlist
+router.delete('/:userId/:listingId', async (req, res) => {
+  try {
+    const wishlist = await Wishlist.findOneAndUpdate(
+      { user: req.params.userId },
+      { $pull: { listings: req.params.listingId } },
+      { new: true }
+    );
+    if (!wishlist) {
+      return res.status(404).json({ error: 'Wishlist not found' });
+    }
+    res.json(wishlist);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+export default router;
+
+```
+
+src/routes/categoryRoutes.ts:
+```
+import express from 'express';
+import Category from '../models/Category';
+
+const router = express.Router();
+
+// Get all categories
+router.get('/', async (req, res) => {
+  try {
+    const categories = await Category.find();
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Create a new category
+router.post('/', async (req, res) => {
+  try {
+    const category = new Category(req.body);
+    await category.save();
+    res.status(201).json(category);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update a category
+router.put('/:categoryId', async (req, res) => {
+  try {
+    const category = await Category.findByIdAndUpdate(
+      req.params.categoryId,
+      req.body,
+      { new: true }
+    );
+    if (!category) {
+      return res.status(404).json({ error: 'Category not found' });
+    }
+    res.json(category);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a category
+router.delete('/:categoryId', async (req, res) => {
+  try {
+    const category = await Category.findByIdAndDelete(req.params.categoryId);
+    if (!category) {
+      return res.status(404).json({ error: 'Category not found' });
+    }
+    res.json({ message: 'Category deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+export default router;
+
+```
+
+src/routes/listingRoutes.ts:
+```
+import express from 'express';
+import Listing from '../models/Listing';
+
+const router = express.Router();
+
+// Get featured listings
+router.get('/featured', async (req, res) => {
+  try {
+    const featuredListings = await Listing.find({ featured: true }).limit(10);
+    res.json(featuredListings);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get a specific listing
+router.get('/:listingId', async (req, res) => {
+  try {
+    const listing = await Listing.findById(req.params.listingId).populate(
+      'seller',
+      'name email'
+    );
+    if (!listing) {
+      return res.status(404).json({ error: 'Listing not found' });
+    }
+    res.json(listing);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get all listings
+router.get('/', async (req, res) => {
+  try {
+    // Default values are strings, parse them as numbers
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const category = req.query.category as string;
+    const searchTerm = req.query.searchTerm as string;
+
+    const query: { category?: string, title?: { $regex: string, $options: string } } = {};
+
+    if (category) {
+      query.category = category;
+    }
+
+    if (searchTerm) {
+      query.title = { $regex: searchTerm, $options: 'i' };
+    }
+
+    const listings = await Listing.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .populate('seller', 'name email');
+
+    res.json(listings);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Create a new listing
+router.post('/', async (req, res) => {
+  try {
+    const listing = new Listing(req.body);
+    await listing.save();
+    res.status(201).json(listing);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update a listing
+router.put('/:listingId', async (req, res) => {
+  try {
+    const listing = await Listing.findByIdAndUpdate(
+      req.params.listingId,
+      req.body,
+      { new: true }
+    );
+    if (!listing) {
+      return res.status(404).json({ error: 'Listing not found' });
+    }
+    res.json(listing);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a listing
+router.delete('/:listingId', async (req, res) => {
+  try {
+    const listing = await Listing.findByIdAndDelete(req.params.listingId);
+    if (!listing) {
+      return res.status(404).json({ error: 'Listing not found' });
+    }
+    res.json({ message: 'Listing deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+export default router;
+```
+
+src/routes/userRoutes.ts:
+```
+import express from 'express';
+import User from '../models/User';
+import Listing from '../models/Listing';
+import bcrypt from 'bcrypt';
+
+const router = express.Router();
+
+// Register a new user
+router.post('/register', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ error: 'User already exists' });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashedPassword });
+    await user.save();
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// User login
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    req.session.userId = user._id;
+    res.json({ message: 'Logged in successfully' });
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// User logout
+router.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error logging out:', err);
+    }
+    res.json({ message: 'Logged out successfully' });
+  });
+});
+
+
+// Get user profile
+router.get('/:userId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error('Error getting user profile:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update user profile
+router.put('/:userId', async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.userId, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+export default router;
+```
+
+src/routes/contactRoutes.ts:
+```
+import express from 'express';
+import User from '../models/User';
+
+const router = express.Router();
+
+// Get seller's contact information
+router.get('/:sellerId', async (req, res) => {
+  try {
+    const seller = await User.findById(req.params.sellerId).select(
+      'contactInfo'
+    );
+    if (!seller) {
+      return res.status(404).json({ error: 'Seller not found' });
+    }
+    res.json(seller.contactInfo);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+export default router;
+
+```
+
