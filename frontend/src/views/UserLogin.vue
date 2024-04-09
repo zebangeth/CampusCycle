@@ -75,9 +75,7 @@ const onSubmit = async () => {
       const errorData = await response.json();
       throw new Error(errorData.error || 'Login Failed!');
     }
-
-    const data = await response.json();
-    localStorage.setItem('token', data.token);
+    
     router.push('/');
   } catch (error) {
     if (error instanceof Error) {

@@ -6,10 +6,12 @@
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
-          <b-nav-item href="/login">Log in</b-nav-item>
-          <b-nav-item href="/register">Sign up</b-nav-item>
-          <!-- Display the user icon if the user is logged in -->
-          <!-- <b-nav-item href="/profile"><b-icon-person-circle></b-icon-person-circle></b-nav-item> -->
+          <b-nav-item href="/login" v-if="!isLoggedIn">Log in</b-nav-item>
+          <b-nav-item href="/register" v-if="!isLoggedIn">Sign up</b-nav-item>
+
+          <b-nav-item href="/profile" v-if="isLoggedIn"><b-icon-person-circle></b-icon-person-circle></b-nav-item>
+          <b-nav-item v-if="isLoggedIn" @click="logout">Log out</b-nav-item>
+
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -66,6 +68,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 interface Category {
   _id: string;
@@ -83,6 +88,32 @@ const categories = ref<Category[]>([]);
 const featuredItems = ref<Item[]>([]);
 const searchTerm = ref('');
 
+const isLoggedIn = ref(false);
+
+const checkLoginStatus = async () => {
+  try {
+    const response = await fetch('/api/users/status');
+    if (!response.ok) throw new Error('Failed to fetch login status');
+    const data = await response.json();
+    isLoggedIn.value = data.isLoggedIn;
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
+};
+
+const logout = async () => {
+  try {
+    const response = await fetch('/api/users/logout', { method: 'POST' });
+    if (!response.ok) throw new Error('Failed to logout');
+    isLoggedIn.value = false;
+    router.push('/');
+  } catch (error) {
+    console.error('Logout error:', error);
+    alert('Logout failed');
+  }
+};
+
+
 const fetchCategories = async () => {
   try {
     const response = await fetch('/api/categories');
@@ -98,7 +129,6 @@ const fetchFeaturedItems = async () => {
     const response = await fetch('/api/listings/featured');
     if (!response.ok) throw new Error('Failed to fetch featured items');
     featuredItems.value = await response.json();
-    console.log(response.json());
   } catch (error) {
     console.error('Fetch error:', error);
   }
@@ -127,6 +157,7 @@ const searchItems = async () => {
 onMounted(async () => {
   await fetchCategories();
   await fetchFeaturedItems();
+  await checkLoginStatus(); 
 });
 </script>
 
