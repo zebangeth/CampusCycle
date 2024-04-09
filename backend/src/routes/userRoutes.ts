@@ -53,6 +53,15 @@ router.post('/logout', isAuthenticated, (req, res) => {
   });
 });
 
+// Check login status
+router.get('/status', (req, res) => {
+  if (req.session && req.session.userId) {
+    return res.json({ isLoggedIn: true });
+  } else {
+    return res.json({ isLoggedIn: false });
+  }
+});
+
 
 // Get user profile
 router.get('/:userId', async (req, res) => {
