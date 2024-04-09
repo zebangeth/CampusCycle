@@ -44,12 +44,13 @@
     </b-container>
   </template>  
   
-  <script setup>
+  <script setup lang="ts">
   import { ref, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
+  import { Product } from '../data';
   
   const route = useRoute();
-  const product = ref(null);
+const product = ref<Product | null>(null);
   const showModal = ref(false);
   const sellerContactInfo = ref(null);
   
@@ -59,15 +60,18 @@
       if (!response.ok) {
         throw new Error('Failed to fetch product details');
       }
-      product.value = await response.json();
+      const data = await response.json();
+    product.value = data as Product;
+    if (product.value) {
       await fetchSellerContactInfo(product.value.seller._id);
+    }
     } catch (error) {
       console.error('Fetch error:', error);
       alert('Error fetching product details');
     }
   };
 
-const fetchSellerContactInfo = async (sellerId) => {
+const fetchSellerContactInfo = async (sellerId: string) => {
   try {
     const response = await fetch(`/api/contact/${sellerId}`);
     if (!response.ok) {
@@ -82,7 +86,8 @@ const fetchSellerContactInfo = async (sellerId) => {
 };
   
 
-const copyToClipboard = (text) => {
+const copyToClipboard = (value: string | number) => {
+    const text = String(value);
   navigator.clipboard.writeText(text)
     .then(() => alert(`${text} copied to clipboard!`))
     .catch((error) => console.error('Copy failed', error));

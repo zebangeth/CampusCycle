@@ -154,7 +154,7 @@ const searchItems = async () => {
   }
 };
 
-const goToProductDetail = (productId) => {
+const goToProductDetail = (productId: string) => {
   router.push(`/product/${productId}`);
 };
 
