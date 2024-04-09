@@ -9,6 +9,7 @@ import App from './App.vue'
 import UserLogin from './views/UserLogin.vue'
 import Home from './views/Home.vue'
 import UserRegister from './views/UserRegister.vue'
+import ProductDetail from './views/ProductDetail.vue'
 
 const routes = [
   {
@@ -22,7 +23,11 @@ const routes = [
   {
     path: "/register",
     component: UserRegister,
-  }
+  },
+  {
+    path: '/product/:productId',
+    component: ProductDetail,
+  }  
 ]
 
 const router = createRouter({

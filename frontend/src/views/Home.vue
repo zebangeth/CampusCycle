@@ -51,7 +51,7 @@
           <h2 class="mb-3">Featured Products</h2>
           <b-row>
             <b-col md="4" sm="6" class="mb-3" v-for="item in featuredItems" :key="item._id">
-              <b-card>
+              <b-card @click="goToProductDetail(item._id)" style="cursor: pointer;">
                 <b-card-img :src="item.images[0]" :alt="`${item.title} image`" top></b-card-img>
                 <b-card-body>
                   <b-card-title>{{ item.title }}</b-card-title>
@@ -152,6 +152,10 @@ const searchItems = async () => {
   } catch (error) {
     console.error('Search error:', error);
   }
+};
+
+const goToProductDetail = (productId: string) => {
+  router.push(`/product/${productId}`);
 };
 
 onMounted(async () => {
