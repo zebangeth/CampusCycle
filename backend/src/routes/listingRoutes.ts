@@ -19,7 +19,7 @@ router.get('/:listingId', async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.listingId).populate(
       'seller',
-      'name email'
+      'name email itemsSold photo preferredContact'
     );
     if (!listing) {
       return res.status(404).json({ error: 'Listing not found' });
