@@ -3,6 +3,7 @@ import express from 'express';
 import session from 'express-session';  
 import MongoStore from 'connect-mongo';
 import connectDB from './database';
+import adminRoutes from './routes/adminRoutes';
 import userRoutes from './routes/userRoutes';
 import categoryRoutes from './routes/categoryRoutes';
 import listingRoutes from './routes/listingRoutes';
@@ -47,6 +48,7 @@ console.log("Connecting to database...");
 connectDB();
 
 // Routes
+app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/listings', listingRoutes);
