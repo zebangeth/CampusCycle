@@ -39,8 +39,9 @@ router.get('/', async (req, res) => {
 
     const category = req.query.category as string;
     const searchTerm = req.query.searchTerm as string;
+    const sellerId = req.query.seller as string;
 
-    const query: { category?: string, title?: { $regex: string, $options: string } } = {};
+    const query: { category?: string, title?: { $regex: string, $options: string }, seller?: string  } = {};
 
     if (category) {
       query.category = category;
@@ -48,6 +49,10 @@ router.get('/', async (req, res) => {
 
     if (searchTerm) {
       query.title = { $regex: searchTerm, $options: 'i' };
+    }
+
+    if (sellerId) {
+      query.seller = sellerId;
     }
 
     const listings = await Listing.find(query)

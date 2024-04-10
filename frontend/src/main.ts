@@ -10,6 +10,7 @@ import UserLogin from './views/UserLogin.vue'
 import Home from './views/Home.vue'
 import UserRegister from './views/UserRegister.vue'
 import ProductDetail from './views/ProductDetail.vue'
+import Profile from './views/Profile.vue'
 
 const routes = [
   {
@@ -27,7 +28,11 @@ const routes = [
   {
     path: '/product/:productId',
     component: ProductDetail,
-  }  
+  },
+  {
+    path: '/profile/:userId',
+    component: Profile,
+  } 
 ]
 
 const router = createRouter({

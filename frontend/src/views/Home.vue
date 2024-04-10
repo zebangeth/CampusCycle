@@ -8,8 +8,10 @@
         <b-navbar-nav class="ml-auto">
           <b-nav-item href="/login" v-if="!isLoggedIn">Log in</b-nav-item>
           <b-nav-item href="/register" v-if="!isLoggedIn">Sign up</b-nav-item>
-
-          <b-nav-item href="/profile" v-if="isLoggedIn"><b-icon-person-circle></b-icon-person-circle></b-nav-item>
+          
+          <b-nav-item v-if="isLoggedIn">
+          <img :src="userPhoto" @click="goToUserProfile" class="profile-photo" alt="Profile" />
+          </b-nav-item>
           <b-nav-item v-if="isLoggedIn" @click="logout">Log out</b-nav-item>
 
         </b-navbar-nav>
@@ -89,6 +91,8 @@ const featuredItems = ref<Item[]>([]);
 const searchTerm = ref('');
 
 const isLoggedIn = ref(false);
+const userId = ref('');
+const userPhoto = ref('');
 
 const checkLoginStatus = async () => {
   try {
@@ -96,6 +100,7 @@ const checkLoginStatus = async () => {
     if (!response.ok) throw new Error('Failed to fetch login status');
     const data = await response.json();
     isLoggedIn.value = data.isLoggedIn;
+    userId.value = data.userId;
   } catch (error) {
     console.error('Fetch error:', error);
   }
@@ -158,13 +163,40 @@ const goToProductDetail = (productId: string) => {
   router.push(`/product/${productId}`);
 };
 
+async function fetchUserData(userId: string) {
+  try {
+    const response = await fetch(`/api/users/${userId}`);
+    if (!response.ok) throw new Error('Failed to fetch user data');
+    const data = await response.json();
+    userPhoto.value = data.photo;
+  } catch (error) {
+    console.error('Fetch user data error:', error);
+  }
+}
+
+function goToUserProfile() {
+  if (userId.value) {
+    router.push(`/profile/${userId.value}`);
+  }
+}
+
 onMounted(async () => {
   await fetchCategories();
   await fetchFeaturedItems();
   await checkLoginStatus(); 
+  if (isLoggedIn.value) {
+    await fetchUserData(userId.value);
+  }
 });
 </script>
 
 <style scoped>
-
+.profile-photo {
+  width: 30px; 
+  height: 30px; 
+  border-radius: 50%;
+  object-fit: cover; 
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 </style>

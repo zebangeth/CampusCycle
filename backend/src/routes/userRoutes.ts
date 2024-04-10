@@ -56,7 +56,7 @@ router.post('/logout', isAuthenticated, (req, res) => {
 // Check login status
 router.get('/status', (req, res) => {
   if (req.session && req.session.userId) {
-    return res.json({ isLoggedIn: true });
+    return res.json({ isLoggedIn: true, userId: req.session.userId });
   } else {
     return res.json({ isLoggedIn: false });
   }

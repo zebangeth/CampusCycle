@@ -19,6 +19,7 @@ export interface Seller {
   }
 
   export interface Product {
+    _id: string;
     title: string;
     description: string;
     images: string[];
@@ -32,3 +33,26 @@ export interface Seller {
     updatedAt: Date;
   }
   
+  export interface ContactInfo {
+    email: string;
+    phoneNumber: string;
+    whatsapp: string;
+    wechat: string;
+    telegram: string;
+    snapchat: string;
+    messenger: string;
+  }
+  
+  export interface User {
+    _id: string;
+    name: string;
+    email: string;
+    password: string;
+    photo: string;
+    tagline: string;
+    joinedDate: Date;
+    itemsSold: number;
+    activeListings: number;
+    contactInfo: ContactInfo;
+    preferredContact: string;
+  }
