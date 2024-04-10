@@ -11,6 +11,8 @@ import Home from './views/Home.vue'
 import UserRegister from './views/UserRegister.vue'
 import ProductDetail from './views/ProductDetail.vue'
 import Profile from './views/Profile.vue'
+import AddListing from './views/AddListing.vue'
+import EditListing from './views/EditListing.vue'
 
 const routes = [
   {
@@ -32,7 +34,15 @@ const routes = [
   {
     path: '/profile/:userId',
     component: Profile,
-  } 
+  },
+  {
+    path: '/edit-listing/:listingId',
+    component: EditListing,
+  },
+  {
+    path: '/add-listing/:userId',
+    component: AddListing,
+  },
 ]
 
 const router = createRouter({

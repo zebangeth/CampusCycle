@@ -3,12 +3,26 @@ export interface LoginData {
     password: string
 }
   
-export interface Seller {
+// export interface Seller {
+//     _id: string;
+//     name: string;
+//     email: string;
+//     photo: string;
+//     itemsSold: number;
+//     preferredContact: string;
+//   }
+
+  export interface User {
     _id: string;
     name: string;
     email: string;
+    password: string;
     photo: string;
+    tagline: string;
+    joinedDate: Date;
     itemsSold: number;
+    activeListings: number;
+    contactInfo: ContactInfo;
     preferredContact: string;
   }
   
@@ -28,7 +42,7 @@ export interface Seller {
     price: number;
     condition: Condition;
     location: string;
-    seller: Seller;
+    seller: User;
     createdAt: Date;
     updatedAt: Date;
     sold: Boolean;
@@ -43,17 +57,8 @@ export interface Seller {
     snapchat: string;
     messenger: string;
   }
-  
-  export interface User {
+
+  export interface Category {
     _id: string;
     name: string;
-    email: string;
-    password: string;
-    photo: string;
-    tagline: string;
-    joinedDate: Date;
-    itemsSold: number;
-    activeListings: number;
-    contactInfo: ContactInfo;
-    preferredContact: string;
   }

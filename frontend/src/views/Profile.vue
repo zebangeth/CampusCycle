@@ -36,7 +36,7 @@
             </b-row>
           </b-card>
 
-            <b-button variant="primary" block to="/add-listing">Add New Listing</b-button>
+            <b-button variant="primary" block @click="addListing">Add New Listing</b-button>
   
             <b-row>
             <b-col v-for="listing in listings" :key="listing._id" md="6" class="mb-4">
@@ -77,7 +77,7 @@
   const listings = ref<Product[]>([]);
   
   onMounted(async () => {
-    const userId = route.params.userId;
+    const userId = route.params.userId
     if (Array.isArray(userId)) {
         console.error('Unexpected array of user IDs');
         return;
@@ -142,6 +142,11 @@
     return new Intl.DateTimeFormat('default', { year: 'numeric', month: 'short', day: 'numeric' }).format(date);
   }
   return ''; 
+}
+
+async function addListing() {
+  const userId = route.params.userId;
+  router.push(`/add-listing/${userId}`);
 }
 
 </script>
