@@ -1,5 +1,6 @@
 import express from 'express';
 import Listing from '../models/Listing';
+import User from '../models/User';
 import { isAuthenticated } from '../middleware/authMiddleware';
 
 const router = express.Router();
@@ -7,7 +8,7 @@ const router = express.Router();
 // Get featured listings
 router.get('/featured', async (req, res) => {
   try {
-    const featuredListings = await Listing.find({ featured: true }).limit(12);
+    const featuredListings = await Listing.find({ featured: true, sold: false }).limit(12);
     res.json(featuredListings);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -69,7 +70,42 @@ router.post('/', isAuthenticated, async (req, res) => {
       seller: req.session.userId,
     });
     await listing.save();
+
+    // Update the user's activeListings field
+    const user = await User.findById(req.session.userId);
+    if (user) {
+      user.activeListings += 1;
+      await user.save();
+    }
+
     res.status(201).json(listing);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Mark a listing as sold
+router.put('/:listingId/sold', isAuthenticated, async (req, res) => {
+  try {
+    const listing = await Listing.findOne({
+      _id: req.params.listingId,
+      seller: req.session.userId,
+    });
+    if (!listing) {
+      return res.status(404).json({ error: 'Listing not found' });
+    }
+    listing.sold = true;
+    await listing.save();
+
+    // Update the user's itemsSold and activeListings fields
+    const user = await User.findById(req.session.userId);
+    if (user) {
+      user.itemsSold += 1;
+      user.activeListings -= 1;
+      await user.save();
+    }
+
+    res.json(listing);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -103,6 +139,14 @@ router.delete('/:listingId', isAuthenticated, async (req, res) => {
     if (!listing) {
       return res.status(404).json({ error: 'Listing not found' });
     }
+    
+    // Update the user's activeListings field
+    const user = await User.findById(req.session.userId);
+    if (user) {
+      user.activeListings += 1;
+      await user.save();
+    }
+
     res.json({ message: 'Listing deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });

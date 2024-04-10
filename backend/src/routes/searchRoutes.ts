@@ -14,7 +14,8 @@ interface Query {
 router.get('/', async (req, res) => {
   try {
     const { q, category, minPrice, maxPrice, condition } = req.query;
-    const query: Query = {}; // Use the Query interface
+
+    const query: any = { sold: false }; // Exclude sold items
 
     if (q) {
       query.title = { $regex: q as string, $options: 'i' };

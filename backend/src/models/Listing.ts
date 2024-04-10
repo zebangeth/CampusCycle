@@ -18,6 +18,7 @@ export interface IListing extends Document {
   seller: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
+  sold: boolean;
 }
 
 const listingSchema = new mongoose.Schema({
@@ -32,6 +33,7 @@ const listingSchema = new mongoose.Schema({
   seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  sold: { type: Boolean, default: false },
 });
 
 const Listing = mongoose.model<IListing>('Listing', listingSchema);
