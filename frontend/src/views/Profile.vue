@@ -3,7 +3,7 @@
       <b-row class="justify-content-md-center">
         <b-col md="8">
           <div class="user-profile">
-            <!-- User details card -->
+
           <b-card class="text-center user-details-card mb-4">
             <b-row>
               <b-col cols="12" class="mb-3">
@@ -39,25 +39,27 @@
             <b-button variant="primary" block to="/add-listing">Add New Listing</b-button>
   
             <b-row>
-              <b-col v-for="listing in listings" :key="listing._id" md="6" class="mb-4">
-                <b-card>
-                  <b-card-img :src="listing.images[0]" :alt="listing.title" top></b-card-img>
-                  <b-card-body>
-                    <b-card-title>{{ listing.title }}</b-card-title>
-                    <b-card-text>
-                      {{ listing.description }}
-                    </b-card-text>
-                    <b-card-text>
-                      <b-button variant="outline-primary" @click="editListing(listing._id)">Edit</b-button>
-                      <b-button variant="outline-danger" @click="markAsSold(listing._id)">Mark as Sold</b-button>
-                    </b-card-text>
-                  </b-card-body>
-                  <b-card-footer>
-                    ${{ listing.price }}
-                  </b-card-footer>
-                </b-card>
-              </b-col>
-            </b-row>
+            <b-col v-for="listing in listings" :key="listing._id" md="6" class="mb-4">
+            <b-card>
+                <div class="card-overlay" v-if="listing.sold"></div>
+                <b-card-img :src="listing.images[0]" :alt="listing.title" top></b-card-img>
+                <b-card-body>
+                <b-card-title>{{ listing.title }}</b-card-title>
+                <b-card-text>
+                    {{ listing.description }}
+                </b-card-text>
+                <b-card-text v-if="!listing.sold">
+                    <b-button variant="outline-primary" @click="editListing(listing._id)">Edit</b-button>
+                    <b-button variant="outline-danger" @click="confirmMarkAsSold(listing._id)">Mark as Sold</b-button>
+                </b-card-text>
+                </b-card-body>
+                <b-card-footer>
+                ${{ listing.price }}
+                </b-card-footer>
+            </b-card>
+            </b-col>
+        </b-row>
+
           </div>
         </b-col>
       </b-row>
@@ -105,10 +107,30 @@
   async function editListing(listingId: string) {
     router.push(`/edit-listing/${listingId}`);
   }
-  
+
+  async function confirmMarkAsSold(listingId: string) {
+  if (window.confirm('Are you sure you want to mark this item as sold?')) {
+    await markAsSold(listingId);
+    const userId = route.params.userId;
+    if (Array.isArray(userId)) {
+        console.error('Unexpected array of user IDs');
+        return;
+    }
+    await fetchUserProfile(userId);
+  }
+}
   async function markAsSold(listingId: string) {
     try {
-      await fetch(`/api/listings/${listingId}`, { method: 'DELETE' });
+    const response = await fetch(`/api/listings/${listingId}/sold`, { method: 'PUT' });
+    if (!response.ok) {
+      throw new Error('Failed to update listing status');
+    }
+    const updatedListing = await response.json();
+    
+    const index = listings.value.findIndex(listing => listing._id === listingId);
+    if (index !== -1) {
+      listings.value[index] = updatedListing;
+    }
     } catch (error) {
       console.error('Failed to mark listing as sold:', error);
     }
@@ -122,11 +144,9 @@
   return ''; 
 }
 
+</script>
 
-
-  </script>
-  
-  <style scoped>
+<style scoped>
 .user-profile {
   margin-top: 20px;
 }
@@ -145,5 +165,15 @@
   padding-top: 1rem;
   border-top: 1px solid #ccc; 
 }
-  </style>
+
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(115, 114, 114, 0.335); 
+  z-index: 1;
+}
+</style>
   

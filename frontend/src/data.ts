@@ -31,6 +31,7 @@ export interface Seller {
     seller: Seller;
     createdAt: Date;
     updatedAt: Date;
+    sold: Boolean;
   }
   
   export interface ContactInfo {
