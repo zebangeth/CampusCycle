@@ -1,5 +1,11 @@
 <template>
     <b-container fluid>
+      <!-- <b-icon icon="arrow-down" class="back-arrow mb-2" @click="goHome" aria-label="Return to home"></b-icon>-->
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left back-arrow" @click="goHome" aria-label="Return to home" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+      </svg>
+
       <b-row class="justify-content-md-center">
         <b-col md="8">
           <div class="user-profile">
@@ -149,6 +155,10 @@ async function addListing() {
   router.push(`/add-listing/${userId}`);
 }
 
+function goHome() {
+  router.push('/');
+}
+
 </script>
 
 <style scoped>
@@ -179,6 +189,14 @@ async function addListing() {
   bottom: 0;
   background-color: rgba(115, 114, 114, 0.335); 
   z-index: 1;
+}
+
+.back-arrow {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 1000;
 }
 </style>
   

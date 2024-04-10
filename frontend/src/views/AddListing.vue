@@ -60,7 +60,7 @@
               ></b-form-input>
             </b-form-group>
   
-            <!-- <b-form-group label="Upload Product Pictures">
+            <b-form-group label="Upload Product Pictures">
             <b-form-file
               @change="handleFilesChange"
               multiple
@@ -74,7 +74,7 @@
               <img :src="imageSrc" alt="Image preview" class="img-thumbnail">
               <b-icon-x class="close-icon" @click="removeImage(index)"></b-icon-x>
             </div>
-          </div> -->
+          </div>
 
           <div class="submit-button-container">
             <b-button type="submit" variant="primary">Submit</b-button>
@@ -139,32 +139,31 @@
     }
   }
 
-// function handleFilesChange(event: { target: { files: any; }; }) {
-//   const files = event.target.files;
-//   if (!files.length) return;
+function handleFilesChange(event: { target: { files: any; }; }) {
+  const files = event.target.files;
+  if (!files.length) return;
 
-//   // Loop through all selected files
-//   Array.from(files).forEach(file => {
-//     convertToBase64(file).then((base64) => {
-//       form.value.images = [...form.value.images, base64];
-//     });
-//   });
-// }
+  Array.from(files).forEach(file => {
+    convertToBase64(file).then((base64: any) => {
+      form.value.images = [...form.value.images, base64];
+    });
+  });
+}
 
 
-// function removeImage(index: number) {
-//   form.value.images.splice(index, 1);
-// }
+function removeImage(index: number) {
+  form.value.images.splice(index, 1);
+}
 
-// function convertToBase64(file: any) {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.readAsDataURL(file);
-//     reader.onload = () => resolve(reader.result as string);
-//     reader.onerror = error => reject(error);
-//   });
-// }
-  </script>
+function convertToBase64(file: any) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = error => reject(error);
+  });
+}
+</script>
   
 <style scoped>
 .image-previews-container {
