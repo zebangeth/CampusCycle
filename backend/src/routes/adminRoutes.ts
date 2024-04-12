@@ -1,37 +1,30 @@
 import express from 'express';
+import passport from 'passport';
 import AdminUser from '../models/Admin';
 import Listing from '../models/Listing';
-import bcrypt from 'bcrypt';
 import { isAdminAuthenticated } from '../middleware/adminAuthMiddleware';
 
 const router = express.Router();
 
 // Admin login
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const adminUser = await AdminUser.findOne({ email });
-    if (!adminUser) {
-      return res.status(401).json({ error: 'Invalid admin credentials' });
-    }
-    const isPasswordValid = await bcrypt.compare(password, adminUser.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Invalid admin credentials' });
-    }
-    req.session.adminUserId = adminUser._id;
-    res.json({ message: 'Admin logged in successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+router.get('/login', passport.authenticate('oidc', {
+  successReturnToOrRedirect: "/"
+}));
+
+// Admin login callback
+router.get('/login-callback', passport.authenticate('oidc', {
+  successReturnToOrRedirect: '/',
+  failureRedirect: '/',
+}));
 
 // Admin logout
-router.post('/logout', isAdminAuthenticated, (req, res) => {
-  req.session.destroy((err) => {
+router.get('/logout', (req, res) => {
+  req.logout((err) => {
     if (err) {
-      console.error('Error logging out:', err);
+      console.error('Error during logout:', err);
+      return res.status(500).json({ error: 'Internal server error' });
     }
-    res.json({ message: 'Admin logged out successfully' });
+    res.redirect('/');
   });
 });
 

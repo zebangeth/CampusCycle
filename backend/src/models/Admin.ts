@@ -2,12 +2,12 @@ import mongoose, { Document } from 'mongoose';
 
 export interface IAdminUser extends Document {
   email: string;
-  password: string;
+  gitlabId: string;
 }
 
 const adminUserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  gitlabId: { type: String, required: true, unique: true },
 });
 
 const AdminUser = mongoose.model<IAdminUser>('AdminUser', adminUserSchema);

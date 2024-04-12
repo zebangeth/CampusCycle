@@ -6,3 +6,17 @@ declare module 'express-session' {
     adminUserId: string | null;
   }
 }
+
+declare namespace Express {
+  interface Request {
+    isAuthenticated(): boolean;
+    isAdmin(): boolean;
+    loginInfo: {
+      _id: string;
+      name: string;
+      email: string;
+      role: string;
+      // Add any other properties of the user object
+    };
+  }
+}
