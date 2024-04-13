@@ -13,6 +13,7 @@ import ProductDetail from './views/ProductDetail.vue'
 import Profile from './views/Profile.vue'
 import AddListing from './views/AddListing.vue'
 import EditListing from './views/EditListing.vue'
+import EditProfile from './views/EditProfile.vue'
 
 const routes = [
   {
@@ -42,6 +43,10 @@ const routes = [
   {
     path: '/add-listing/:userId',
     component: AddListing,
+  },
+  {
+    path: '/edit-profile/:userId',
+    component: EditProfile,
   },
 ]
 

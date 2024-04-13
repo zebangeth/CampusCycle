@@ -42,6 +42,7 @@
             </b-row>
           </b-card>
 
+            <b-button variant="outline-primary" block @click="editProfile">Edit Profile</b-button>
             <b-button variant="primary" block @click="addListing">Add New Listing</b-button>
   
             <b-row>
@@ -157,6 +158,11 @@ async function addListing() {
 
 function goHome() {
   router.push('/');
+}
+
+function editProfile() {
+  const userId = route.params.userId;
+  router.push(`/edit-profile/${userId}`);
 }
 
 </script>
