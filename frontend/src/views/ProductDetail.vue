@@ -77,9 +77,7 @@ const fetchSellerContactInfo = async (sellerId: string) => {
     if (!response.ok) {
       throw new Error('Failed to fetch seller contact info');
     }
-    const data = await response.json();
-    sellerContactInfo.value = JSON.parse(data);
-    console.log(sellerContactInfo);
+    sellerContactInfo.value = await response.json();
   } catch (error) {
     console.error('Fetch seller contact info error:', error);
   }
