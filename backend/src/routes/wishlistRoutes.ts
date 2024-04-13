@@ -7,7 +7,7 @@ const router = express.Router();
 // Get user's wishlist
 router.get('/', isAuthenticated, async (req, res) => {
   try {
-    const wishlist = await Wishlist.findOne({ user: req.session.userId })
+    const wishlist = await Wishlist.findOne({ user: req.session.passport.user.id })
       .populate('listings')
       .populate('user', 'name email');
     if (!wishlist) {
@@ -23,9 +23,9 @@ router.get('/', isAuthenticated, async (req, res) => {
 router.post('/', isAuthenticated, async (req, res) => {
   try {
     const { listingId } = req.body;
-    let wishlist = await Wishlist.findOne({ user: req.session.userId });
+    let wishlist = await Wishlist.findOne({ user: req.session.passport.user.id });
     if (!wishlist) {
-      wishlist = new Wishlist({ user: req.session.userId });
+      wishlist = new Wishlist({ user: req.session.passport.user.id });
       await wishlist.save();
     }
     
@@ -36,7 +36,7 @@ router.post('/', isAuthenticated, async (req, res) => {
     );
     
     // Reload wishlist to reflect the update
-    wishlist = await Wishlist.findOne({ user: req.session.userId })
+    wishlist = await Wishlist.findOne({ user: req.session.passport.user.id })
       .populate('listings')
       .populate('user', 'name email');
     
@@ -50,7 +50,7 @@ router.post('/', isAuthenticated, async (req, res) => {
 router.delete('/:listingId', isAuthenticated, async (req, res) => {
   try {
     const wishlist = await Wishlist.findOneAndUpdate(
-      { user: req.session.userId },
+      { user: req.session.passport.user.id },
       { $pull: { listings: req.params.listingId } },
       { new: true }
     );
