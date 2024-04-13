@@ -8,9 +8,10 @@
         <b-navbar-nav class="ml-auto">
           <b-nav-item href="/api/users/login" v-if="!isLoggedIn">Log in</b-nav-item>
           
-          <b-nav-item v-if="isLoggedIn">
+          <b-nav-item v-if="isLoggedIn && !isAdmin">
           <img :src="userPhoto" @click="goToUserProfile" class="profile-photo" alt="Profile" />
           </b-nav-item>
+          <b-nav-item v-if="isLoggedIn && isAdmin">Welcome, admin!</b-nav-item>
           <b-nav-item v-if="isLoggedIn" @click="logout">Log out</b-nav-item>
 
         </b-navbar-nav>
@@ -57,6 +58,13 @@
                 <b-card-body>
                   <b-card-title>{{ item.title }}</b-card-title>
                   <b-card-text>${{ item.price }}</b-card-text>
+                  <div v-if="isAdmin">
+                      <div v-if="!item.featured">
+                        <b-button variant="info" @click.stop="markAsFeatured(item._id)">Mark as Featured</b-button>
+                      </div>
+                      <b-button variant="danger" @click.stop="deleteItem(item._id)">Delete</b-button>
+                  </div>
+
                 </b-card-body>
               </b-card>
             </b-col>
@@ -83,6 +91,7 @@ interface Item {
   title: string;
   price: number;
   images: string[];
+  featured: boolean
 }
 
 const categories = ref<Category[]>([]);
@@ -90,18 +99,52 @@ const featuredItems = ref<Item[]>([]);
 const searchTerm = ref('');
 
 const isLoggedIn = ref(false);
+const isAdmin = ref(false);
 const userId = ref('');
 const userPhoto = ref('');
 
 const checkLoginStatus = async () => {
   try {
-    const response = await fetch('/api/users/status');
+    const response = await fetch('/api/admin/status');
     if (!response.ok) throw new Error('Failed to fetch login status');
     const data = await response.json();
     isLoggedIn.value = data.isLoggedIn;
+    isAdmin.value = data.isAdmin;
     userId.value = data.userId;
   } catch (error) {
     console.error('Fetch error:', error);
+  }
+};
+
+const markAsFeatured = async (itemId: any) => {
+  if (!confirm('Are you sure you want to mark this item as featured?')) return;
+
+  try {
+    const response = await fetch(`/api/admin/listings/${itemId}/featured`, {
+    method: 'PUT',
+    });
+    if (!response.ok) throw new Error('Failed to mark as featured');
+    alert('Item marked as featured successfully'); 
+    await fetchFeaturedItems();
+  } catch (error) {
+    console.error('Error marking item as featured:', error);
+    alert('Failed to mark as featured');
+  }
+};
+
+const deleteItem = async (itemId: any) => {
+  if (!confirm('Are you sure you want to delete this item?')) return;
+
+  try {
+    const response = await fetch(`/api/admin/listings/${itemId}/force`, {
+    method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to delete item');
+    alert('Item deleted successfully'); 
+    await fetchFeaturedItems();
+  } catch (error) {
+    console.error('Error deleting item:', error);
+    alert('Failed to delete item');
   }
 };
 
@@ -140,7 +183,7 @@ const fetchFeaturedItems = async () => {
 
 const filterByCategory = async (categoryName: string) => {
   try {
-    const response = await fetch(`/api/listings?category=${categoryName}`);
+    const response = await fetch(`/api/listings?category=${categoryName}&sold=false`);
     if (!response.ok) throw new Error('Failed to filter by category');
     featuredItems.value = await response.json();
   } catch (error) {
@@ -183,7 +226,7 @@ onMounted(async () => {
   await fetchCategories();
   await fetchFeaturedItems();
   await checkLoginStatus(); 
-  if (isLoggedIn.value) {
+  if (isLoggedIn.value && !isAdmin) {
     await fetchUserData(userId.value);
   }
 });

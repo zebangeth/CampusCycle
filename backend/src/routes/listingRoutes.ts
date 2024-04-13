@@ -41,8 +41,9 @@ router.get('/', async (req, res) => {
     const category = req.query.category as string;
     const searchTerm = req.query.searchTerm as string;
     const sellerId = req.query.seller as string;
+    const sold = req.query.sold;
 
-    const query: { category?: string, title?: { $regex: string, $options: string }, seller?: string  } = {};
+    const query: { category?: string, title?: { $regex: string, $options: string }, seller?: string, sold?: boolean } = {};
 
     if (category) {
       query.category = category;
@@ -54,6 +55,10 @@ router.get('/', async (req, res) => {
 
     if (sellerId) {
       query.seller = sellerId;
+    }
+
+    if(sold){
+      query.sold = sold === 'true';
     }
 
     const listings = await Listing.find(query)
