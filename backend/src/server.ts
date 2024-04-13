@@ -71,14 +71,14 @@ Issuer.discover("https://coursework.cs.duke.edu/").then(issuer => {
   const client = new issuer.Client({
     client_id: process.env.GITLAB_CLIENT_ID as string,
     client_secret: process.env.GITLAB_CLIENT_SECRET as string,
-    redirect_uris: ['http://127.0.0.1:3000/login-callback'],
+    redirect_uris: ['http://localhost:3001/api/login-callback'],
     // response_types: ['code'],
   });
 
   const params = {
     scope: 'openid profile email',
     nonce: generators.nonce(),
-    redirect_uri: 'http://127.0.0.1:3000/login-callback',
+    redirect_uri: 'http://localhost:3001/api/login-callback',
     state: generators.state(),
   };
   passport.use(
@@ -87,6 +87,7 @@ Issuer.discover("https://coursework.cs.duke.edu/").then(issuer => {
       try {
         // Check if the user is an admin
         const isAdmin = userInfo.groups.includes(process.env.GITLAB_ADMIN_GROUP_ID);
+        const gitlabId = userInfo.sub; 
 
         if (isAdmin) {
           // Find or create the admin user in the database
@@ -94,6 +95,7 @@ Issuer.discover("https://coursework.cs.duke.edu/").then(issuer => {
           if (!adminUser) {
             adminUser = new AdminUser({
               email: userInfo.email,
+              gitlabId: gitlabId,
             });
             await adminUser.save();
           }
@@ -106,6 +108,7 @@ Issuer.discover("https://coursework.cs.duke.edu/").then(issuer => {
             regularUser = new User({
               name: userInfo.name,
               email: userInfo.email,
+              gitlabId: gitlabId,
             });
             await regularUser.save();
           }
@@ -148,7 +151,7 @@ app.get('/', (req, res) => {
 });
 
 // User login callback
-app.get('/login-callback', passport.authenticate('oidc', {
+app.get('/api/login-callback', passport.authenticate('oidc', {
   successReturnToOrRedirect: '/',
   failureRedirect: '/api/users/login',
 }));
