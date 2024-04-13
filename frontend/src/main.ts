@@ -6,9 +6,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import App from './App.vue'
-import UserLogin from './views/UserLogin.vue'
 import Home from './views/Home.vue'
-import UserRegister from './views/UserRegister.vue'
 import ProductDetail from './views/ProductDetail.vue'
 import Profile from './views/Profile.vue'
 import AddListing from './views/AddListing.vue'
@@ -17,16 +15,8 @@ import EditProfile from './views/EditProfile.vue'
 
 const routes = [
   {
-    path: "/login",
-    component: UserLogin,
-  },
-  {
     path: "/",
     component: Home,
-  },
-  {
-    path: "/register",
-    component: UserRegister,
   },
   {
     path: '/product/:productId',

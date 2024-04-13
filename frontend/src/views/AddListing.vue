@@ -194,6 +194,7 @@ function convertToBase64(file: any) {
 
 .submit-button-container {
   text-align: center;
+  margin-bottom: 20px;
 }
 </style>
   

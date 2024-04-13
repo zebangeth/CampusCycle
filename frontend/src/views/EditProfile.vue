@@ -24,16 +24,43 @@
             <b-form-input id="input-tagline" v-model="form.tagline"></b-form-input>
           </b-form-group>
 
-          <b-form-group id="input-group-phone" label="Phone Number" label-for="input-phone">
-            <b-form-input id="input-phone" v-model="form.contactInfo.phoneNumber"></b-form-input>
-          </b-form-group>
-          <!-- Repeat similar blocks for other contact info fields like WhatsApp, WeChat, etc. -->
+          <h2>Contact Information</h2>
+          <b-row>
 
-          <!-- Preferred Contact Method Select -->
+            <b-col cols="6">
+              <b-form-group id="input-group-email" label="Email" label-for="input-email">
+                <b-form-input id="input-email" v-model="form.contactInfo.email"></b-form-input>
+              </b-form-group>
+              <b-form-group id="input-group-phone" label="Phone Number" label-for="input-phone">
+                <b-form-input id="input-phone" v-model="form.contactInfo.phoneNumber"></b-form-input>
+              </b-form-group>
+              <b-form-group id="input-group-whatsapp" label="WhatsApp" label-for="input-whatsapp">
+                <b-form-input id="input-whatsapp" v-model="form.contactInfo.whatsapp"></b-form-input>
+              </b-form-group>
+              <b-form-group id="input-group-wechat" label="WeChat" label-for="input-wechat">
+                <b-form-input id="input-wechat" v-model="form.contactInfo.wechat"></b-form-input>
+              </b-form-group>
+            </b-col>
+
+            <b-col cols="6">
+              <b-form-group id="input-group-telegram" label="Telegram" label-for="input-telegram">
+                <b-form-input id="input-telegram" v-model="form.contactInfo.telegram"></b-form-input>
+              </b-form-group>
+              <b-form-group id="input-group-snapchat" label="Snapchat" label-for="input-snapchat">
+                <b-form-input id="input-snapchat" v-model="form.contactInfo.snapchat"></b-form-input>
+              </b-form-group>
+              <b-form-group id="input-group-messenger" label="Messenger" label-for="input-messenger">
+                <b-form-input id="input-messenger" v-model="form.contactInfo.messenger"></b-form-input>
+              </b-form-group>
+            </b-col>
+          </b-row>
+
+
           <b-form-group label="Preferred Contact Method">
             <b-form-select v-model="form.preferredContact" :options="contactOptions"></b-form-select>
           </b-form-group>
 
+          <h2>Profile Photo</h2>
           <div class="image-preview" v-if="form.photo">
             <img :src="form.photo" alt="Profile photo" class="img-thumbnail">
           </div>
@@ -90,7 +117,9 @@ const contactOptions = [
   { value: 'phoneNumber', text: 'Phone Number' },
   { value: 'whatsapp', text: 'WhatsApp' },
   { value: 'wechat', text: 'WeChat' },
-  // Add other options as needed
+  { value: 'telegram', text: 'Telegram' },
+  { value: 'snapchat', text: 'Snapchat' },
+  { value: 'messenger', text: 'Messenger' },
 ];
 
 const userId = route.params.userId; 
@@ -168,5 +197,6 @@ function convertToBase64(file: File): Promise<string> {
 
 .submit-button-container {
   text-align: center;
+  margin-bottom: 20px;
 }
 </style>
