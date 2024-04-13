@@ -1,67 +1,56 @@
 import express from 'express';
+import passport from 'passport'
 import User from '../models/User';
-import bcrypt from 'bcrypt';
 import { isAuthenticated } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-// Register a new user
-router.post('/register', async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(409).json({ error: 'User already exists' });
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword });
-    await user.save();
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    console.error('Error registering user:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
 // User login
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    req.session.userId = user._id;
-    res.json({ message: 'Logged in successfully' });
-  } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+router.get(
+  "/login", 
+  passport.authenticate("oidc", { failureRedirect: "/api/login" }), 
+  (req, res) => res.redirect("/")
+)
+
+// User login callback
+router.get(
+  "/login-callback",
+  passport.authenticate("oidc", {
+    successRedirect: "/",
+    failureRedirect: "/api/login",
+  })
+)
 
 // User logout
-router.post('/logout', isAuthenticated, (req, res) => {
-  req.session.destroy((err) => {
+router.post('/logout', (req, res) => {
+  console.log('Logging out');
+  req.logout((err) => {
     if (err) {
-      console.error('Error logging out:', err);
+      console.error('Error during logout:', err);
+      return res.status(500).json({ error: 'Internal server error' });
     }
-    res.json({ message: 'Logged out successfully' });
+    
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+      
+      res.redirect('/');
+    });
   });
 });
 
 // Check login status
 router.get('/status', (req, res) => {
-  if (req.session && req.session.userId) {
-    return res.json({ isLoggedIn: true, userId: req.session.userId });
+  console.log('Checking login status');
+  console.log(req.session);
+  if (req.session && req.session.passport && req.session.passport.user) {
+    return res.json({ isLoggedIn: true, userId: req.session.passport.user.id });
   } else {
     return res.json({ isLoggedIn: false });
   }
 });
-
 
 // Get user profile
 router.get('/:userId', async (req, res) => {
@@ -81,7 +70,7 @@ router.get('/:userId', async (req, res) => {
 router.put('/:userId', isAuthenticated, async (req, res) => {
   try {
     const userId = req.params.userId;
-    if (userId !== req.session.userId) {
+    if (userId !== req.session.passport.user.id) {
       return res.status(403).json({ error: 'You can only update your own profile' });
     }
     const user = await User.findByIdAndUpdate(userId, req.body, {

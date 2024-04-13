@@ -3,7 +3,7 @@ import mongoose, { Document } from 'mongoose';
 export interface IUser extends Document {
   name: string;
   email: string;
-  password: string;
+  gitlabId: string;
   photo: string;
   tagline: string;
   joinedDate: Date;
@@ -22,9 +22,9 @@ export interface IUser extends Document {
 }
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  gitlabId: { type: String, required: true, unique: true },
   photo: { type: String },
   tagline: { type: String },
   joinedDate: { type: Date, default: Date.now },
