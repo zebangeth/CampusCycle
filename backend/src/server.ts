@@ -87,6 +87,8 @@ Issuer.discover("https://coursework.cs.duke.edu/").then(issuer => {
       try {
         // Check if the user is an admin
         const isAdmin = userInfo.groups.includes(process.env.GITLAB_ADMIN_GROUP_ID);
+        console.log("xxxxxxxxxxxxxxxxxxxxxxx");
+        console.log("user group name:", userInfo.groups);
         const gitlabId = userInfo.sub; 
 
         if (isAdmin) {

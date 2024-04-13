@@ -72,12 +72,12 @@ router.post('/', isAuthenticated, async (req, res) => {
   try {
     const listing = new Listing({
       ...req.body,
-      seller: req.session.userId,
+      seller: req.session.passport.user.id,
     });
     await listing.save();
 
     // Update the user's activeListings field
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.session.passport.user.id);
     if (user) {
       user.activeListings += 1;
       await user.save();
@@ -94,7 +94,7 @@ router.put('/:listingId/sold', isAuthenticated, async (req, res) => {
   try {
     const listing = await Listing.findOne({
       _id: req.params.listingId,
-      seller: req.session.userId,
+      seller: req.session.passport.user.id,
     });
     if (!listing) {
       return res.status(404).json({ error: 'Listing not found' });
@@ -103,7 +103,7 @@ router.put('/:listingId/sold', isAuthenticated, async (req, res) => {
     await listing.save();
 
     // Update the user's itemsSold and activeListings fields
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.session.passport.user.id);
     if (user) {
       user.itemsSold += 1;
       user.activeListings -= 1;
@@ -121,7 +121,7 @@ router.put('/:listingId', isAuthenticated, async (req, res) => {
   try {
     const listing = await Listing.findOne({
       _id: req.params.listingId,
-      seller: req.session.userId,
+      seller: req.session.passport.user.id,
     });
     if (!listing) {
       return res.status(404).json({ error: 'Listing not found' });
@@ -139,14 +139,14 @@ router.delete('/:listingId', isAuthenticated, async (req, res) => {
   try {
     const listing = await Listing.findOneAndDelete({
       _id: req.params.listingId,
-      seller: req.session.userId,
+      seller: req.session.passport.user.id,
     });
     if (!listing) {
       return res.status(404).json({ error: 'Listing not found' });
     }
     
     // Update the user's activeListings field
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.session.passport.user.id);
     if (user) {
       user.activeListings += 1;
       await user.save();

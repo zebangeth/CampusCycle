@@ -6,26 +6,15 @@ import { isAdminAuthenticated } from '../middleware/adminAuthMiddleware';
 
 const router = express.Router();
 
-// Admin login
-router.get('/login', passport.authenticate('oidc', {
-  successReturnToOrRedirect: "/"
-}));
-
-// Admin login callback
-router.get('/login-callback', passport.authenticate('oidc', {
-  successReturnToOrRedirect: '/',
-  failureRedirect: '/',
-}));
-
-// Admin logout
-router.get('/logout', (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      console.error('Error during logout:', err);
-      return res.status(500).json({ error: 'Internal server error' });
-    }
-    res.redirect('/');
-  });
+// Check admin login status
+router.get('/status', (req, res) => {
+  if (req.session && req.session.passport && req.session.passport.user.role === 'admin') {
+    return res.json({ isLoggedIn: true, isAdmin: true, userId: req.session.passport.user.id });
+  } else if (req.session && req.session.passport) {
+    return res.json({ isLoggedIn: true, isAdmin: false, userId: req.session.passport.user.id });
+  } else {
+    return res.json({ isLoggedIn: false });
+  }
 });
 
 // Mark listing as featured

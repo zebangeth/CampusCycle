@@ -5,76 +5,51 @@ import { isAuthenticated } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-// // User login
-// // router.get('/login', passport.authenticate('oidc', {
-// //   successReturnToOrRedirect: "/"
-// // }));
-// router.get('/login', 
-// passport.authenticate("oidc", { failureRedirect: "/login" }), 
-// (req, res) => res.redirect("/")
-// )
-
-// router.get('/login-callback',
-//   passport.authenticate('oidc', { failureRedirect: '/login' }),
-//   async (req, res) => {
-//     try {
-//       const userInfo = req.user as any;
-
-//       // Find or create the user in the database
-//       let user = await User.findOne({ email: userInfo.email });
-//       if (!user) {
-//         user = new User({
-//           name: userInfo.name,
-//           email: userInfo.email,
-//           gitlabId: userInfo.sub,
-//           // Set other user properties as needed
-//         });
-//         await user.save();
-//       }
-
-//       // // Set the user information in the session
-//       // req.session.loginInfo = {
-//       //   _id: user._id,
-//       //   name: user.name,
-//       //   email: user.email,
-//       //   role: 'user',
-//       // };
-
-//       // Redirect the user to the desired page after successful login
-//       res.redirect('/');
-//     } catch (error) {
-//       console.error('Error during login callback:', error);
-//       res.redirect('/login');
-//     }
-//   }
-// );
-
-
-
+// User login
 router.get(
   "/login", 
   passport.authenticate("oidc", { failureRedirect: "/api/login" }), 
   (req, res) => res.redirect("/")
 )
 
+// User login callback
 router.get(
   "/login-callback",
   passport.authenticate("oidc", {
     successRedirect: "/",
     failureRedirect: "/api/login",
   })
-)    
-
+)
 
 // User logout
-router.get('/logout', (req, res) => {
+router.post('/logout', (req, res) => {
+  console.log('Logging out');
   req.logout((err) => {
     if (err) {
       console.error('Error during logout:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    res.redirect('/');
+    
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+      
+      res.redirect('/');
+    });
   });
+});
+
+// Check login status
+router.get('/status', (req, res) => {
+  console.log('Checking login status');
+  console.log(req.session);
+  if (req.session && req.session.passport && req.session.passport.user) {
+    return res.json({ isLoggedIn: true, userId: req.session.passport.user.id });
+  } else {
+    return res.json({ isLoggedIn: false });
+  }
 });
 
 // Get user profile
@@ -95,7 +70,7 @@ router.get('/:userId', async (req, res) => {
 router.put('/:userId', isAuthenticated, async (req, res) => {
   try {
     const userId = req.params.userId;
-    if (userId !== req.session.userId) {
+    if (userId !== req.session.passport.user.id) {
       return res.status(403).json({ error: 'You can only update your own profile' });
     }
     const user = await User.findByIdAndUpdate(userId, req.body, {
