@@ -48,7 +48,7 @@ e2e-test: # to be implemented
     - docker pull mongo:latest
   script:
     - echo "Running e2e tests..."
-     - docker-compose -f docker-compose.yml up -d 
+    - docker-compose -f docker-compose.yml up -d 
     - sleep 30 
     - npm i
     - npm ci
