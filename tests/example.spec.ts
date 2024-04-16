@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('test contact seller', async ({ page }) => {
-  await page.goto('http://localhost:8080/');
+  await page.goto('http://localhost:80/');
   await page.getByRole('button', { name: 'Outdoors' }).click();
   await page.getByRole('img', { name: 'Mountain Bike image' }).click();
   await expect(page.getByRole('button', { name: 'Contact Seller' })).toBeVisible();
