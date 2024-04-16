@@ -42,6 +42,7 @@ e2e-test: # to be implemented
   stage: test
   script:
     - echo "Running e2e tests..."
+    - npx playwright test
     - echo "e2e tests complete."
 
 deploy:
