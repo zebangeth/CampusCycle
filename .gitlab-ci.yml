@@ -57,7 +57,7 @@ e2e-test: # to be implemented
     - echo "e2e tests complete."
   artifacts:
     when: always
-    path: 
+    paths: 
       - playwright-report/index.html
 
 deploy:
