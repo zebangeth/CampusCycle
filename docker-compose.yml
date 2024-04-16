@@ -13,20 +13,20 @@ services:
       - PORT=3000
       - SESSION_SECRET=<my-session-secret>
       - NODE_ENV=development
-    depends_on:
-      - mongo
+    # depends_on:
+    #   - mongo
 
   frontend:
     image: zebangeth/campuscycle:frontend-latest
     ports:
       - "3001:3001"
 
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
+#   mongo:
+#     image: mongo:latest
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - mongo-data:/data/db
 
-volumes:
-  mongo-data:
+# volumes:
+#   mongo-data:
