@@ -40,10 +40,21 @@ unit-test: # to be implemented
 
 e2e-test: # to be implemented
   stage: test
+  image: docker:19.03.12
+  services:
+    - docker:19.03.12-dind
+  before_script:
+    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
+    - docker pull $REGISTRY_PATH:frontend-latest
+    - docker pull $REGISTRY_PATH:backend-latest
+    - docker pull mongo:latest
   script:
     - echo "Running e2e tests..."
+     - docker-compose -f docker-compose.yml up -d 
+    - sleep 30 
     - npm i
     - npx playwright test
+    - docker-compose down
     - echo "e2e tests complete."
 
 deploy:
