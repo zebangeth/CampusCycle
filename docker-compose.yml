@@ -1,18 +1,18 @@
 version: '3.8'
 services:
   backend:
-    image: campuscycle-backend:latest # 使用您构建的后端镜像名称
+    image: zebangeth/campuscycle:backend-latest
     ports:
-      - "3000:3000" # 映射端口（如果您的后端服务在容器内监听3000端口）
+      - "3000:3000"
     # environment:
     #   - MONGODB_URI=mongodb://mongo:27017/CampusCycle # 示例 MongoDB URI, 根据需要进行调整
     depends_on:
       - mongo
 
   frontend:
-    image: campuscycle-frontend:latest # 使用您构建的前端镜像名称
+    image: zebangeth/campuscycle:frontend-latest
     ports:
-      - "3001:3001" # 假设您的前端在容器内监听80端口
+      - "3001:3001"
 
   mongo:
     image: mongo:latest
