@@ -45,6 +45,7 @@ e2e-test: # to be implemented
     - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
     - docker pull $REGISTRY_PATH:frontend-latest
     - docker pull $REGISTRY_PATH:backend-latest
+    - node seeddb.js
   script:
     - echo "Running e2e tests..."
     - docker-compose -f docker-compose.yml up -d 
