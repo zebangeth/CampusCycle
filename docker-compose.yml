@@ -13,6 +13,7 @@ services:
       - PORT=3000
       - SESSION_SECRET=<my-session-secret>
       - NODE_ENV=development
+      - DISABLE_SECURITY=alpha
     # depends_on:
     #   - mongo
 
