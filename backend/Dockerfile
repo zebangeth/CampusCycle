@@ -25,5 +25,6 @@ ENV DISABLE_SECURITY=alpha
 
 # Install only production dependencies
 RUN npm install --only=production
+RUN npm install passport-custom
 ENTRYPOINT [ "node", "dist/server.js" ]
 EXPOSE 3000
