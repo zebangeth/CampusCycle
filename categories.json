@@ -1,6 +1,32 @@
-{"_id":{"$oid":"661218fa7bc06af68ae92d9a"},"name":"Furniture","icon":"furniture_icon.png"}
-{"_id":{"$oid":"661218fa7bc06af68ae92d9b"},"name":"Electronics","icon":"electronics_icon.png"}
-{"_id":{"$oid":"661218fa7bc06af68ae92d9c"},"name":"Books","icon":"books_icon.png"}
-{"_id":{"$oid":"6612198a7bc06af68ae92da5"},"name":"Clothing","icon":"clothing_icon.png"}
-{"_id":{"$oid":"6612198a7bc06af68ae92da6"},"name":"Outdoors","icon":"sports_outdoors_icon.png"}
-{"_id":{"$oid":"6612198a7bc06af68ae92da7"},"name":"Tech Gadgets","icon":"tech_gadgets_icon.png"}
+[
+  {
+    "_id": "ObjectId('661218fa7bc06af68ae92d9a')",
+    "name": "Furniture",
+    "icon": "furniture_icon.png"
+  },
+  {
+    "_id": "ObjectId('661218fa7bc06af68ae92d9b')",
+    "name": "Electronics",
+    "icon": "electronics_icon.png"
+  },
+  {
+    "_id": "ObjectId('661218fa7bc06af68ae92d9c')",
+    "name": "Books",
+    "icon": "books_icon.png"
+  },
+  {
+    "_id": "ObjectId('6612198a7bc06af68ae92da5')",
+    "name": "Clothing",
+    "icon": "clothing_icon.png"
+  },
+  {
+    "_id": "ObjectId('6612198a7bc06af68ae92da6')",
+    "name": "Outdoors",
+    "icon": "sports_outdoors_icon.png"
+  },
+  {
+    "_id": "ObjectId('6612198a7bc06af68ae92da7')",
+    "name": "Tech Gadgets",
+    "icon": "tech_gadgets_icon.png"
+  }
+]

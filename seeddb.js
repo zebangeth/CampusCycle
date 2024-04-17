@@ -12,11 +12,6 @@ async function seedDatabase() {
 
     const db = client.db(dbName);
 
-    // Seed adminusers collection
-    await db.collection('adminusers').deleteMany({});
-    await db.collection('adminusers').insertMany(require('./adminusers.json'));
-    console.log('Seeded adminusers collection');
-
     // Seed categories collection
     await db.collection('categories').deleteMany({});
     await db.collection('categories').insertMany(require('./categories.json'));
@@ -27,20 +22,10 @@ async function seedDatabase() {
     await db.collection('listings').insertMany(require('./listings.json'));
     console.log('Seeded listings collection');
 
-    // Seed sessions collection
-    await db.collection('sessions').deleteMany({});
-    await db.collection('sessions').insertMany(require('./sessions.json'));
-    console.log('Seeded sessions collection');
-
     // Seed users collection
     await db.collection('users').deleteMany({});
     await db.collection('users').insertMany(require('./users.json'));
     console.log('Seeded users collection');
-
-    // Seed wishlists collection
-    await db.collection('wishlists').deleteMany({});
-    await db.collection('wishlists').insertMany(require('./wishlists.json'));
-    console.log('Seeded wishlists collection');
 
   } catch (error) {
     console.error('Error seeding database:', error);

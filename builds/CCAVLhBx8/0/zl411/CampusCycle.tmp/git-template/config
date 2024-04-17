@@ -1,0 +1,8 @@
+[init]
+	defaultBranch = none
+[fetch]
+	recurseSubmodules = false
+[transfer]
+	bundleURI = true
+[http "https://coursework.cs.duke.edu"]
+	sslCAInfo = /Users/zebang.eth/Desktop/Duke/CS 590/projects/CampusCycle/builds/CCAVLhBx8/0/zl411/CampusCycle.tmp/CI_SERVER_TLS_CA_FILE
