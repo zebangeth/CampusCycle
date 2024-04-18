@@ -2,7 +2,7 @@
   <div class="home-page">
 
     <b-navbar toggleable="lg" type="light" variant="light">
-      <b-navbar-brand href="#">Campus Cycle</b-navbar-brand>
+      <b-navbar-brand href="/">Campus Cycle</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
@@ -24,7 +24,7 @@
       </b-collapse>
     </b-navbar>
 
-    <b-container class="search-container">
+    <b-container class="search-container mt-3">
       <b-row>
         <b-col>
           <b-form-input
