@@ -40,11 +40,24 @@ unit-test: # to be implemented
 
 e2e-test: # to be implemented
   stage: test
+  image: mcr.microsoft.com/playwright:v1.43.0-jammy
+  before_script:
+    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
+    - docker pull $REGISTRY_PATH:frontend-latest
+    - docker pull $REGISTRY_PATH:backend-latest
   script:
     - echo "Running e2e tests..."
+    - docker-compose -f docker-compose.yml up -d 
+    - sleep 10
     - npm i
+    - npm ci
     - npx playwright test
+    - docker-compose down
     - echo "e2e tests complete."
+  artifacts:
+    when: always
+    paths: 
+      - playwright-report/index.html
 
 deploy:
   stage: deploy
