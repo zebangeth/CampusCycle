@@ -5,6 +5,7 @@ import MongoStore from 'connect-mongo';
 import connectDB from './database';
 import { Issuer, Strategy, generators } from 'openid-client'
 import passport from 'passport'
+import { Strategy as CustomStrategy } from "passport-custom"
 
 import User from './models/User';
 import AdminUser from './models/Admin';
@@ -20,6 +21,13 @@ import contactRoutes from './routes/contactRoutes';
 console.log("Starting server...");
 const app = express();
 const port = process.env.PORT || 3000;
+const DISABLE_SECURITY = process.env.DISABLE_SECURITY
+
+const passportStrategies = [
+  ...(DISABLE_SECURITY ? ["disable-security"] : []),
+  "oidc",
+]
+
 
 // Middleware
 console.log("Setting up middleware...");
@@ -66,6 +74,15 @@ passport.deserializeUser(async (userInfo: any, done) => {
     done(error);
   }
 });
+
+passport.use("disable-security", new CustomStrategy((req, done) => {
+  if (req.query.key !== DISABLE_SECURITY) {
+    console.log("you must supply ?key=" + DISABLE_SECURITY + " to log in via DISABLE_SECURITY")
+    done(null, false)
+  } else {
+    done(null, { _id: req.query.id, name: req.query.name, email: req.query.email, role: req.query.role})
+  }
+}))
 
 Issuer.discover("https://coursework.cs.duke.edu/").then(issuer => {
   const client = new issuer.Client({
@@ -153,10 +170,15 @@ app.get('/', (req, res) => {
 });
 
 // User login callback
-app.get('/api/login-callback', passport.authenticate('oidc', {
+// app.get('/api/login-callback', passport.authenticate('oidc', {
+//   successReturnToOrRedirect: '/',
+//   failureRedirect: '/api/users/login',
+// }));
+app.get('/api/login-callback', passport.authenticate(passportStrategies, {
   successReturnToOrRedirect: '/',
   failureRedirect: '/api/users/login',
-}));
+}))
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

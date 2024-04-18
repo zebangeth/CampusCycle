@@ -2,14 +2,20 @@
   <div class="home-page">
 
     <b-navbar toggleable="lg" type="light" variant="light">
-      <b-navbar-brand href="#">Campus Cycle</b-navbar-brand>
+      <b-navbar-brand href="/">Campus Cycle</b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item href="/api/users/login" v-if="!isLoggedIn">Log in</b-nav-item>
           
           <b-nav-item v-if="isLoggedIn && !isAdmin">
-          <img :src="userPhoto" @click="goToUserProfile" class="profile-photo" alt="Profile" />
+          <!-- <img :src="userPhoto" @click="goToUserProfile" class="profile-photo" alt="Profile" /> -->
+          <img v-if="userPhoto" :src="userPhoto" @click="goToUserProfile" class="profile-photo" alt="Profile" />
+          <!-- <b-icon v-else icon="person-circle" @click="goToUserProfile" class="profile-photo" style="font-size: 30px;"></b-icon> -->
+          <svg v-else @click="goToUserProfile" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+          </svg>
           </b-nav-item>
           <b-nav-item v-if="isLoggedIn && isAdmin">Welcome, admin!</b-nav-item>
           <b-nav-item v-if="isLoggedIn" @click="logout">Log out</b-nav-item>
@@ -18,7 +24,7 @@
       </b-collapse>
     </b-navbar>
 
-    <b-container class="search-container">
+    <b-container class="search-container mt-3">
       <b-row>
         <b-col>
           <b-form-input
@@ -226,7 +232,7 @@ onMounted(async () => {
   await fetchCategories();
   await fetchFeaturedItems();
   await checkLoginStatus(); 
-  if (isLoggedIn.value && !isAdmin) {
+  if (isLoggedIn.value && !isAdmin.value) {
     await fetchUserData(userId.value);
   }
 });
