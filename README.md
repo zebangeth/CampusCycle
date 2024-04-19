@@ -2,11 +2,6 @@
 
 Campus Cycle is a localized e-commerce platform designed specifically for college students to buy and sell used goods and furniture. This platform addresses the needs of college students who frequently move, offering an affordable, sustainable, and community-driven solution.
 
-- Team Member: Zebang Li (zl411), Xinyi Xie (xx98)
-
-- Archetype: Commerce/Ordering Site
-
-
 ## Project Structure
 
 The project is structured into separate directories for the frontend and backend:
@@ -38,17 +33,17 @@ The project also includes Docker configurations for containerizing the frontend 
 
 ## Team Members and Division of Labor
 
-- Xie, Xinyi (xx98) - Frontend Dev
+- Xie, Xinyi - Frontend Dev
   - UI Design Implementation: Translate UI/UX designs into functional web components.
   - State Management & Routing: Implement state management and Vue Router for navigation between pages.
   - Integration with Backend: Consume RESTful API endpoints. Handle data fetching and display content based on API responses.
 
-- Li, Zebang (zl411) - Backend Dev
+- Li, Zebang - Backend Dev
   - API Design & Implementation: Develop RESTful API endpoints for authentication, user management, listing operations, etc.
   - Database Management: Design and implement MongoDB schemas.
   - Security: Implement data validation, user authentication, safe concurrency handling, etc. Ensure the effectiveness of role-based access control.
 
-Both team members contribute to containerizing the application, deploying it, and creating and maintaining end-to-end tests.
+Both of us contribute to containerizing the application, deploying it, and creating and maintaining end-to-end tests.
 
 ## Acknowledgements
 
