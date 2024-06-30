@@ -37,31 +37,49 @@ The project also includes Docker configurations for containerizing the frontend 
   <tr>
     <td width="50%">
       <img src="./images/HomeScreen.png" alt="Home Screen" width="100%">
-      <p align="center"><em>Home Screen: Search bar, categories, and featured items grid</em></p>
+      <p align="center">
+        <strong>Home Screen</strong><br>
+        <em>Search bar, categories, and featured items grid</em>
+      </p>
     </td>
     <td width="50%">
       <img src="./images/LoginScreen.png" alt="Login Screen" width="100%">
-      <p align="center"><em>Login Screen: User authentication with registration option</em></p>
+      <p align="center">
+        <strong>Login Screen</strong><br>
+        <em>User authentication with registration option</em>
+      </p>
     </td>
   </tr>
   <tr>
     <td width="50%">
       <img src="./images/ProductDetail.png" alt="Product Detail Screen" width="100%">
-      <p align="center"><em>Product Detail: Images, info, and seller contact button</em></p>
+      <p align="center">
+        <strong>Product Detail</strong><br>
+        <em>Images, info, and seller contact button</em>
+      </p>
     </td>
     <td width="50%">
       <img src="./images/ProfileScreen.png" alt="User Profile Screen" width="100%">
-      <p align="center"><em>Profile/My Listing: User info, stats, and active listings</em></p>
+      <p align="center">
+        <strong>Profile/My Listing</strong><br>
+        <em>User info, stats, and active listings</em>
+      </p>
     </td>
   </tr>
   <tr>
     <td width="50%">
       <img src="./images/EditListing.png" alt="Listing Form Screen" width="100%">
-      <p align="center"><em>Edit Listing: Form for creating/editing product listings</em></p>
+      <p align="center">
+        <strong>Edit Listing</strong><br>
+        <em>Form for creating/editing product listings</em>
+      </p>
     </td>
     <td width="50%">
       <img src="./images/ContactSeller.png" alt="Contact Seller Screen" width="100%">
-      <p align="center"><em>Contact Seller: Pop-up dialog with seller's contact info</em></p>
+      <p align="center">
+        <strong>Contact Seller</strong><br>
+        <em>Pop-up dialog with seller's contact info</em>
+      </p>
     </td>
   </tr>
 </table>
