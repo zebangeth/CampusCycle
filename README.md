@@ -2,11 +2,6 @@
 
 Campus Cycle is a localized e-commerce platform designed specifically for college students to buy and sell used goods and furniture. This platform addresses the needs of college students who frequently move, offering an affordable, sustainable, and community-driven solution.
 
-- Team Member: Zebang Li (zl411), Xinyi Xie (xx98)
-
-- Archetype: Commerce/Ordering Site
-
-
 ## Project Structure
 
 The project is structured into separate directories for the frontend and backend:
@@ -36,25 +31,55 @@ The project also includes Docker configurations for containerizing the frontend 
 - Deployment: Kubernetes
 - CI/CD: GitLab CI/CD Pipeline
 
+## Key App Screens
+
+## Key App Screens
+
+## Key App Screens
+
+<div align="center">
+  <div style="display: inline-block; width: 45%; margin-right: 5%;">
+    <img src="./images/HomeScreen.png" alt="Home Screen" width="100%">
+    <p><em>Home Screen: Search bar, categories, and featured items grid</em></p>
+  </div>
+  <div style="display: inline-block; width: 45%;">
+    <img src="./images/LoginScreen.png" alt="Login Screen" width="100%">
+    <p><em>Login Screen: User authentication with registration option</em></p>
+  </div>
+</div>
+
+<div align="center">
+  <div style="display: inline-block; width: 45%; margin-right: 5%;">
+    <img src="./images/ProductDetail.png" alt="Product Detail Screen" width="100%">
+    <p><em>Product Detail: Images, info, and seller contact button</em></p>
+  </div>
+  <div style="display: inline-block; width: 45%;">
+    <img src="./images/ProfileScreen.png" alt="User Profile Screen" width="100%">
+    <p><em>Profile/My Listing: User info, stats, and active listings</em></p>
+  </div>
+</div>
+
+<div align="center">
+  <div style="display: inline-block; width: 45%; margin-right: 5%;">
+    <img src="./images/EditListing.png" alt="Listing Form Screen" width="100%">
+    <p><em>Edit Listing: Form for creating/editing product listings</em></p>
+  </div>
+  <div style="display: inline-block; width: 45%;">
+    <img src="./images/ContactSeller.png" alt="Contact Seller Screen" width="100%">
+    <p><em>Contact Seller: Pop-up dialog with seller's contact info</em></p>
+  </div>
+</div>
+
 ## Team Members and Division of Labor
 
-- Xie, Xinyi (xx98) - Frontend Dev
+- Xie, Xinyi - Frontend Dev
   - UI Design Implementation: Translate UI/UX designs into functional web components.
   - State Management & Routing: Implement state management and Vue Router for navigation between pages.
   - Integration with Backend: Consume RESTful API endpoints. Handle data fetching and display content based on API responses.
 
-- Li, Zebang (zl411) - Backend Dev
+- Li, Zebang - Backend Dev
   - API Design & Implementation: Develop RESTful API endpoints for authentication, user management, listing operations, etc.
   - Database Management: Design and implement MongoDB schemas.
   - Security: Implement data validation, user authentication, safe concurrency handling, etc. Ensure the effectiveness of role-based access control.
 
 Both team members contribute to containerizing the application, deploying it, and creating and maintaining end-to-end tests.
-
-## Acknowledgements
-
-- Code Reference:
-  - Vue Router: lecture09-routing
-  - Submission Form: lecture04-form-ui, lecture10-form-ui
-  - MongoDB Dev: lecture10-form-ui
-  - Express and Middleware: lecture07-signup-list, lecture08-signup-list
-  - OIDC: smoothie-stand-oidc

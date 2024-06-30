@@ -7,6 +7,7 @@ const router = express.Router();
 
 // Get featured listings
 router.get('/featured', async (req, res) => {
+  console.log("Getting home page featured products...")
   try {
     const featuredListings = await Listing.find({ featured: true, sold: false }).limit(12);
     res.json(featuredListings);
