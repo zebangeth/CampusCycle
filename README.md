@@ -33,38 +33,38 @@ The project also includes Docker configurations for containerizing the frontend 
 
 ## Key App Screens
 
-<div align="center">
-  <div style="display: inline-block; width: 45%; margin-right: 5%;">
-    <img src="./images/HomeScreen.png" alt="Home Screen" width="100%">
-    <p><em>Home Screen: Search bar, categories, and featured items grid</em></p>
-  </div>
-  <div style="display: inline-block; width: 45%;">
-    <img src="./images/LoginScreen.png" alt="Login Screen" width="100%">
-    <p><em>Login Screen: User authentication with registration option</em></p>
-  </div>
-</div>
-
-<div align="center">
-  <div style="display: inline-block; width: 45%; margin-right: 5%;">
-    <img src="./images/ProductDetail.png" alt="Product Detail Screen" width="100%">
-    <p><em>Product Detail: Images, info, and seller contact button</em></p>
-  </div>
-  <div style="display: inline-block; width: 45%;">
-    <img src="./images/ProfileScreen.png" alt="User Profile Screen" width="100%">
-    <p><em>Profile/My Listing: User info, stats, and active listings</em></p>
-  </div>
-</div>
-
-<div align="center">
-  <div style="display: inline-block; width: 45%; margin-right: 5%;">
-    <img src="./images/EditListing.png" alt="Listing Form Screen" width="100%">
-    <p><em>Edit Listing: Form for creating/editing product listings</em></p>
-  </div>
-  <div style="display: inline-block; width: 45%;">
-    <img src="./images/ContactSeller.png" alt="Contact Seller Screen" width="100%">
-    <p><em>Contact Seller: Pop-up dialog with seller's contact info</em></p>
-  </div>
-</div>
+<table>
+  <tr>
+    <td width="50%">
+      <img src="./images/HomeScreen.png" alt="Home Screen" width="100%">
+      <p align="center"><em>Home Screen: Search bar, categories, and featured items grid</em></p>
+    </td>
+    <td width="50%">
+      <img src="./images/LoginScreen.png" alt="Login Screen" width="100%">
+      <p align="center"><em>Login Screen: User authentication with registration option</em></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="./images/ProductDetail.png" alt="Product Detail Screen" width="100%">
+      <p align="center"><em>Product Detail: Images, info, and seller contact button</em></p>
+    </td>
+    <td width="50%">
+      <img src="./images/ProfileScreen.png" alt="User Profile Screen" width="100%">
+      <p align="center"><em>Profile/My Listing: User info, stats, and active listings</em></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img src="./images/EditListing.png" alt="Listing Form Screen" width="100%">
+      <p align="center"><em>Edit Listing: Form for creating/editing product listings</em></p>
+    </td>
+    <td width="50%">
+      <img src="./images/ContactSeller.png" alt="Contact Seller Screen" width="100%">
+      <p align="center"><em>Contact Seller: Pop-up dialog with seller's contact info</em></p>
+    </td>
+  </tr>
+</table>
 
 ## Team Members and Division of Labor
 
