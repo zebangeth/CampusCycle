@@ -78,4 +78,4 @@ The project also includes Docker configurations for containerizing the frontend 
   - Database Management: Design and implement MongoDB schemas.
   - Security: Implement data validation, user authentication, safe concurrency handling, etc. Ensure the effectiveness of role-based access control.
 
-Both team members contribute to containerizing the application, deploying it, and creating and maintaining end-to-end tests.
+Both of us contribute to containerizing the application, deploying it, and creating and maintaining end-to-end tests.
