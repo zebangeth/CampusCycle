@@ -33,10 +33,6 @@ The project also includes Docker configurations for containerizing the frontend 
 
 ## Key App Screens
 
-## Key App Screens
-
-## Key App Screens
-
 <div align="center">
   <div style="display: inline-block; width: 45%; margin-right: 5%;">
     <img src="./images/HomeScreen.png" alt="Home Screen" width="100%">
